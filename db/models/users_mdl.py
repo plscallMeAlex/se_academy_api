@@ -4,7 +4,7 @@ from sqlalchemy.dialects.mysql import INTEGER as MySQLInteger
 from sqlalchemy.orm import relationship
 from uuid import uuid4
 from datetime import time
-from ..database import Base
+from db.database import Base
 
 class User(Base):
     __tablename__ = "user"
