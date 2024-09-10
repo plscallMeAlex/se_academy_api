@@ -31,22 +31,26 @@ class User_History(Base):
     __tablename__ = "user_history"
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
-    user_id = Column(Integer, ForeignKey("user.id"))
-    course_id = Column(Integer, ForeignKey("course.id"))
-    course_video_id = Column(Integer, ForeignKey("course_video.id"))
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
+    # course_id = Column(Integer, ForeignKey("course.id"))
+    # course_video_id = Column(Integer, ForeignKey("course_video.id"))
     started_at = Column(Date)
     ended_at = Column(Date)
     started_time = Column(Time)
     stoped_time = Column(Time)
     duration = Column(Time)
 
+    user = relationship("User", back_populates="history")
+
 class Achievement(Base):
     __tablename__ = "achievement"
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
-    user_id = Column(Integer, ForeignKey("user.id"))        # link to user table via user_id
+    user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))        # link to user table via user_id
     title = Column(String)
     detail = Column(String)
     image = Column(String)
     type = Column(String)
     received_at = Column(Date)
+
+    user = relationship("User", back_populates="achievement")

@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post("/", response_model=UserResponse)
 async def create_user(user_create: UserCreate, db: Session = Depends(db_dependency)):
     # Use `db` to interact with the database
-    db_user = User(**user_create.dict())
+    db_user = User(**user_create.model_dump())
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
