@@ -3,10 +3,11 @@ from sqlalchemy.orm import Session
 from db.database import db_dependency  # Adjust the import path as needed
 from db.models.users_mdl import User
 from db.schemas.users_sch import UserCreate, UserResponse
+from uuid import UUID
 
 router = APIRouter()
 
-@router.post("/users/", response_model=UserResponse)
+@router.post("/", response_model=UserResponse)
 async def create_user(user_create: UserCreate, db: Session = Depends(db_dependency)):
     # Use `db` to interact with the database
     db_user = User(**user_create.dict())
@@ -15,8 +16,8 @@ async def create_user(user_create: UserCreate, db: Session = Depends(db_dependen
     db.refresh(db_user)
     return db_user
 
-@router.get("/users/{user_id}", response_model=UserResponse)
-async def read_user(user_id: int, db: Session = Depends(db_dependency)):
+@router.get("/{user_id}", response_model=UserResponse)
+async def read_user(user_id: UUID, db: Session = Depends(db_dependency)):
     # Use `db` to interact with the database
     user = db.query(User).filter(User.id == user_id).first()
     if user is None:
