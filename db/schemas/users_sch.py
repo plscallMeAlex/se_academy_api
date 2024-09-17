@@ -18,6 +18,13 @@ class UserCreate(UserBase):
 
     class Config:
         from_attributes = True
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+    class Config:
+        from_attributes = True
     
 class UserDelete(UserBase):
     id: UUID
@@ -36,3 +43,8 @@ class UserResponse(UserBase):
     id: UUID
     username: str
     firstname: str
+    lastname: str
+
+    class Config:
+        from_attributes = True
+

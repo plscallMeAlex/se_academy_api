@@ -24,8 +24,10 @@ class User(Base):
     status = Column(String)   # can change to enum of user{undergraduated, graduated}
 
     # link to user_history & achievement table via user_id
-    history = relationship("User_History", back_populates="user")
-    achievement = relationship("Achievement", back_populates="user")
+    history = relationship("User_History", back_populates="user", cascade="all, delete-orphan")
+    achievement = relationship("Achievement", back_populates="user", cascade="all, delete-orphan")
+
+    tokens = relationship("Token", back_populates="user", cascade="all, delete-orphan")
 
 class User_History(Base):
     __tablename__ = "user_history"

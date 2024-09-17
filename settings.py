@@ -3,8 +3,12 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Setting(BaseSettings):
+    # Database
     DB_URL:str
+
+    # Token
     SECRET_KEY:str
+    EXPIRE_TIME_HOURS:int
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True)
 

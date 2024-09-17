@@ -54,3 +54,15 @@ If you want to creating the table using command:
     alembic revision --autogenerate -m "{message}"
     alembic upgrade head
 ```
+
+If you want to upgrade the migrate Using this command:
+
+```bash
+    alembic upgrade head
+```
+
+for downgrade the base:
+
+```bash
+    alembic downgrade head-1
+```
