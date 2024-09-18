@@ -3,6 +3,9 @@ from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Setting(BaseSettings):
+    #Frontend URL
+    FRONTEND_URL:str
+    
     # Database
     DB_URL:str
 
