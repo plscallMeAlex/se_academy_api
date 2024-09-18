@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from db.models import token_mdl, users_mdl
+from db.models import token_mdl, user_mdl
 from settings import get_settings
 from db.database import db_dependency
 
@@ -24,7 +24,7 @@ def verify_password(plain_password:str, hashed_password:str)->bool:
     return pwd_context.verify(plain_password + settings.SECRET_KEY, hashed_password)
 
 # # A token part to generate the token
-def create_access_token(user:users_mdl.User, db:Session, expire_hours:int = 24):
+def create_access_token(user:user_mdl.User, db:Session, expire_hours:int = 24):
     token_str = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(32))
 
     new_token = token_mdl.Token(token=token_str, user_id=user.id, state=True,created_at=datetime.now(datetime.timezone.utc),expired_at=datetime.now(datetime.timezone.utc)+timedelta(hours=expire_hours), updated_at=datetime.now(datetime.timezone.utc))
