@@ -1,6 +1,7 @@
 # This file contains the function for jwt and hashing
 import string
 import secrets
+from functools import lru_cache
 from datetime import datetime, timedelta
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
@@ -26,7 +27,7 @@ def verify_password(plain_password:str, hashed_password:str)->bool:
 def create_access_token(user:users_mdl.User, db:Session, expire_hours:int = 24):
     token_str = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(32))
 
-    new_token = token_mdl.Token(token=token_str, user_id=user.id, state=True,created_at=datetime.utcnow(),expired_at=datetime.utcnow()+timedelta(hours=expire_hours), updated_at=datetime.utcnow())
+    new_token = token_mdl.Token(token=token_str, user_id=user.id, state=True,created_at=datetime.now(datetime.timezone.utc),expired_at=datetime.now(datetime.timezone.utc)+timedelta(hours=expire_hours), updated_at=datetime.now(datetime.timezone.utc))
 
     db.add(new_token)
     db.commit()
@@ -34,10 +35,13 @@ def create_access_token(user:users_mdl.User, db:Session, expire_hours:int = 24):
 
     return new_token
 
+@lru_cache()
 def check_token_valid(token:str, db:Session=Depends(db_dependency)):
     token = db.query(token_mdl.Token).filter(token_mdl.Token.token == token).first()
 
-    if not token or token.expired_at < datetime.utcnow():
+    if not token:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User does not have a permission to access")
+    if token.expired_at < datetime.now(datetime.timezone.utc):
         token.state = False
         db.commit()
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Token")
