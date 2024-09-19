@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse 
 from sqlalchemy.orm import Session
 from db.database import db_dependency  # Adjust the import path as needed
-from db.models.users_mdl import User
-from db.schemas.users_sch import UserCreate, UserResponse, UserLogin
+from db.models.user_mdl import User
+from db.schemas.user_sch import UserCreate, UserResponse, UserLogin
 from security import hash_password, create_access_token, verify_password
 
 
@@ -21,7 +21,7 @@ async def login(user:UserLogin, db:Session=Depends(db_dependency)):
 
     token = create_access_token(db_user,db=db)
     response = JSONResponse(content={"login":"success"}, status_code=200)
-    response.headers["Authorization"] = token.token
+    response.headers["Authorization"] = token
     return response
 
 @router.post("/register")
