@@ -13,6 +13,6 @@ add_middleware(app)
 @app.get("/")
 def status_check():
     try:
-        return JSONResponse(content={"status" :"ok"})
+        return JSONResponse(content={"status" :True})
     except Exception as e:
-        return JSONResponse(content={"status" :"error"})
+        return JSONResponse(content={"status" :False, "error_msg":str(e)})
