@@ -1,10 +1,24 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Time, Date
+from sqlalchemy import Column, ForeignKey, Integer, String, Time, Date, Enum as EnumType
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.dialects.mysql import INTEGER as MySQLInteger
 from sqlalchemy.orm import relationship
 from uuid import uuid4
+from enum import Enum
 from datetime import time
 from db.database import Base
+
+class RoleEnum(str, Enum):
+    freshman = "freshman"
+    sophomore = "sophomore"
+    junior = "junior"
+    senior = "senior"
+    graduate = "graduate"
+    admin = "admin"
+
+class StatusEnum(str, Enum):
+    active = "active"
+    inactive = "inactive"
+    suspended = "suspended"
 
 class User(Base):
     __tablename__ = "user"
@@ -17,11 +31,11 @@ class User(Base):
     year = Column(Integer)
     email = Column(String, unique=True, index=True)
     avatar = Column(String)
-    role = Column(String)       # can change to enum of user{freshman, sophmore, junior, senior, graduated}, admin if u like.
+    role = Column(EnumType(RoleEnum), default=RoleEnum.freshman) 
     level = Column(MySQLInteger(unsigned=True), default=1)
     score = Column(MySQLInteger(unsigned=True), default=0)
     study_hours = Column(Time, default=time())
-    status = Column(String)   # can change to enum of user{undergraduated, graduated}
+    status = Column(EnumType(StatusEnum), default=StatusEnum.active)
 
     # link to user_history & achievement table via user_id
     history = relationship("User_History", back_populates="user", cascade="all, delete-orphan")

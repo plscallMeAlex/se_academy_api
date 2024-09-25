@@ -1,7 +1,6 @@
 # This file contains the function for jwt and hashing
 import string
 import secrets
-from functools import lru_cache
 from datetime import datetime, timedelta, timezone 
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
@@ -35,7 +34,6 @@ def create_access_token(user:user_mdl.User, db:Session, expire_hours:int = 24)->
 
     return token_str
 
-@lru_cache()
 def check_token_valid(token:str, db:Session=Depends(db_dependency)):
     token = db.query(token_mdl.Token).filter(token_mdl.Token.token == token).first()
 
