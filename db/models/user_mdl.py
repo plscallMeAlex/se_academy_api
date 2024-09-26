@@ -3,22 +3,9 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.dialects.mysql import INTEGER as MySQLInteger
 from sqlalchemy.orm import relationship
 from uuid import uuid4
-from enum import Enum
 from datetime import time
 from db.database import Base
-
-class RoleEnum(str, Enum):
-    freshman = "freshman"
-    sophomore = "sophomore"
-    junior = "junior"
-    senior = "senior"
-    graduate = "graduate"
-    admin = "admin"
-
-class StatusEnum(str, Enum):
-    active = "active"
-    inactive = "inactive"
-    suspended = "suspended"
+from db.models.models import RoleEnum, StatusEnum
 
 class User(Base):
     __tablename__ = "user"

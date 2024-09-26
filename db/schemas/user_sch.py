@@ -1,4 +1,3 @@
-from db.models.user_mdl import RoleEnum, StatusEnum
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from uuid import UUID

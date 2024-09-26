@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse 
 from sqlalchemy.orm import Session
 from db.database import db_dependency  # Adjust the import path as needed
-from db.models.user_mdl import User, RoleEnum, StatusEnum
+from db.models.user_mdl import User
+from db.models.models import RoleEnum, StatusEnum
 from db.schemas.user_sch import UserCreate, UserResponse, UserLogin
 from security import hash_password, create_access_token, verify_password
 

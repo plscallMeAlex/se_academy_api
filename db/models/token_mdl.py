@@ -16,4 +16,3 @@ class Token(Base):
     updated_at = Column(DateTime)
 
     user = relationship("User", back_populates="tokens")
-    
