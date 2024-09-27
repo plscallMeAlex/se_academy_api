@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Time, Enum
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from uuid import uuid4
+from datetime import datetime, timezone
 from db.models.enum_type import StatusEnum
 from db.database import Base
 
@@ -14,8 +15,8 @@ class Course(Base):
     course_image = Column(String)
     category_id = Column(UUID(as_uuid=True), ForeignKey("category.id"))
     year = Column(Integer)
-    created_at = Column(DateTime)
-    status = Column(EnumType(StatusEnum))
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    status = Column(EnumType(StatusEnum), default=StatusEnum.active)
     total_video = Column(Integer)
     total_duration = Column(Time)
     enrolled = Column(Integer)  # number of students enrolled in the course
@@ -29,5 +30,6 @@ class Course_Video(Base):
     course_id = Column(UUID(as_uuid=True), ForeignKey("course.id"))
     title = Column(String)
     video_path = Column(String)
+    duration = Column(Time)
 
     course = relationship("Course", back_populates="course_video")
