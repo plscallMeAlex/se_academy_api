@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from uuid import uuid4
 from db.database import Base
+from db.models.course_mdl import Course, Course_Video
 
 class Enrolled_Course(Base):
     __tablename__ = "enrolled_course"
@@ -15,7 +16,7 @@ class Enrolled_Course(Base):
 
     course = relationship("Course")
 
-class Enrolled_Courese_Video(Base):
+class Enrolled_Course_Video(Base):
     __tablename__ = "enrolled_course_video"
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)

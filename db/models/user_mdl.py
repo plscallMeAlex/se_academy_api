@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship
 from uuid import uuid4
 from datetime import time
 from db.database import Base
+from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
 from db.models.enum_type import RoleEnum, StatusEnum
 
 # This make the tables that interact with the user table become the child of the User class to make easy
@@ -45,8 +46,8 @@ class User_Progress(Base):
 
     # relationship between user_progress and other tables
     user = relationship("User", back_populates="progress")
-    enrolled_course = relationship("Enrolled_Course", cascade="all, delete-orphan")
-    enrolled_course_video = relationship("Enrolled_Course_Video", cascade="all, delete-orphan")
+    enrolled_course = relationship("Enrolled_Course")
+    enrolled_course_video = relationship("Enrolled_Course_Video")
 
 class Achievement(Base):
     __tablename__ = "achievement"
