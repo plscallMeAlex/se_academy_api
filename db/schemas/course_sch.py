@@ -1,7 +1,6 @@
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from db.models.enum_type import StatusEnum
-from datetime import time
 from uuid import UUID
 
 '''SCHEMAS FOR COURSE VIDEO'''
@@ -17,7 +16,7 @@ class CourseVideoDetail(BaseModel):
     id: UUID
     title: str  
     video_path: str
-    duration: time
+    duration: float
 
 # for updating the video in the situation that you want to update the path or
 # the title of the video
@@ -38,10 +37,11 @@ class CourseVideoDelete(BaseModel):
 class CourseCreate(BaseModel):
     title: str
     description: str
-    course_image: Optional[str]="default.jpg"
-    category_id: UUID
     year: int
-    videos: Optional[list[CourseVideoCreate]] = []
+
+    @classmethod
+    def as_form(cls, title:str, description:str, year:int)-> 'CourseCreate':
+        return cls(title=title, description=description, year=year)
 
 # for updating the course when some detail want to
 # be up to date
@@ -66,7 +66,7 @@ class CourseDetail(BaseModel):
     created_at: str
     status: StatusEnum
     total_video: int
-    total_duration: time
+    total_duration: float
     enrolled: int
 
 # for suspending the course

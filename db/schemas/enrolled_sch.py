@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime, time
+from datetime import datetime
 from uuid import UUID
 
 '''SCHEMAS FOR ENROLLED COURSE'''
@@ -44,12 +44,12 @@ class EnrolledCourseVideoCreate(BaseModel):
 # the video or not by using the user id or course_video_id
 class EnrolledCourseVideoDetail(BaseModel):
     status: bool
-    timestamp: time
+    timestamp: float
 
 # to update the video status or timestamp
 class EnrolledCourseVideoUpdate(BaseModel):
     status: Optional[bool]
-    timestamp: Optional[time]
+    timestamp: Optional[float]
 
 # to delete the video from the enrolled course video
 class EnrolledCourseVideoDelete(BaseModel):

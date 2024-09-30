@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Boolean, ForeignKey, DateTime, Time
+from sqlalchemy import Column, Boolean, ForeignKey, DateTime,Time, Float
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from uuid import uuid4
@@ -23,6 +23,6 @@ class Enrolled_Course_Video(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
     course_video_id = Column(UUID(as_uuid=True), ForeignKey("course_video.id"))
     status = Column(Boolean)
-    timestamp = Column(Time)
+    timestamp = Column(Float, default=0.0)
 
     course_video = relationship("Course_Video")

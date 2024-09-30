@@ -1,9 +1,8 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Time, Date, DateTime, Enum as EnumType
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Date, DateTime, Enum as EnumType
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.dialects.mysql import INTEGER as MySQLInteger
 from sqlalchemy.orm import relationship
 from uuid import uuid4
-from datetime import time
 from db.database import Base
 from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
 from db.models.enum_type import RoleEnum, StatusEnum
@@ -25,7 +24,7 @@ class User(Base):
     role = Column(EnumType(RoleEnum, name="roleenum"), default=RoleEnum.freshman) 
     level = Column(MySQLInteger(unsigned=True), default=1)
     score = Column(MySQLInteger(unsigned=True), default=0)
-    study_hours = Column(Time, default=time())
+    study_hours = Column(Float , default=0.0)
     status = Column(EnumType(StatusEnum), default=StatusEnum.active)
 
     # relationship between user and other tables
@@ -42,7 +41,7 @@ class User_Progress(Base):
     enrolled_course_video_id = Column(UUID(as_uuid=True), ForeignKey("enrolled_course_video.id"))
     started_at = Column(DateTime)
     ended_at = Column(DateTime)
-    duration = Column(Time)
+    duration = Column(Float, default=0.0)
 
     # relationship between user_progress and other tables
     user = relationship("User", back_populates="progress")
