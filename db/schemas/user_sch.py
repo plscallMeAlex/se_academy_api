@@ -1,4 +1,4 @@
-from db.models.user_mdl import RoleEnum, StatusEnum
+from fastapi import UploadFile, Form, File
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from uuid import UUID
@@ -28,17 +28,30 @@ class UserLogin(BaseModel):
 
     class Config:
         from_attributes = True
+
+# response that will shown when u want the detail of the user
+class UserDetail(BaseModel):
+    id: UUID
+    firstname: str
+    lastname: str
+    email: EmailStr
+    year: int
+    avatar: str
+
+# simple response if it work u can use it if not u can adjust it
+# updating the data for the user
+class UserUpdate(BaseModel):
+    firstname: Optional[str] = Form(None)
+    lastname: Optional[str] = Form(None)
+    email: Optional[EmailStr] = Form(None)
+    year: Optional[int] = Form(None)
+    avatar: Optional[UploadFile] = File(None)
+
+    class Config:
+        from_attributes = True
     
 class UserDelete(BaseModel):
     id: UUID
-    class Config:
-        from_attributes = True
-
-class UserDetail(BaseModel):
-    id: Optional[UUID]  = None
-    username: Optional[str] = None
-    firstname: Optional[str] = None
-
     class Config:
         from_attributes = True
 

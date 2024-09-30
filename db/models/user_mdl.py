@@ -1,24 +1,14 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, Time, Date, Enum as EnumType
+from sqlalchemy import Column, ForeignKey, Integer, String, Float, Date, DateTime, Enum as EnumType
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.dialects.mysql import INTEGER as MySQLInteger
 from sqlalchemy.orm import relationship
 from uuid import uuid4
-from enum import Enum
-from datetime import time
 from db.database import Base
+from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
+from db.models.enum_type import RoleEnum, StatusEnum
 
-class RoleEnum(str, Enum):
-    freshman = "freshman"
-    sophomore = "sophomore"
-    junior = "junior"
-    senior = "senior"
-    graduate = "graduate"
-    admin = "admin"
-
-class StatusEnum(str, Enum):
-    active = "active"
-    inactive = "inactive"
-    suspended = "suspended"
+# This make the tables that interact with the user table become the child of the User class to make easy
+# to maintain by using relationship with cascad to delete the child table when the parent table is deleted
 
 class User(Base):
     __tablename__ = "user"
@@ -31,32 +21,32 @@ class User(Base):
     year = Column(Integer)
     email = Column(String, unique=True, index=True)
     avatar = Column(String)
-    role = Column(EnumType(RoleEnum), default=RoleEnum.freshman) 
+    role = Column(EnumType(RoleEnum, name="roleenum"), default=RoleEnum.freshman) 
     level = Column(MySQLInteger(unsigned=True), default=1)
     score = Column(MySQLInteger(unsigned=True), default=0)
-    study_hours = Column(Time, default=time())
+    study_hours = Column(Float , default=0.0)
     status = Column(EnumType(StatusEnum), default=StatusEnum.active)
 
-    # link to user_history & achievement table via user_id
-    history = relationship("User_History", back_populates="user", cascade="all, delete-orphan")
+    # relationship between user and other tables
+    progress = relationship("User_Progress", back_populates="user", cascade="all, delete-orphan")
     achievement = relationship("Achievement", back_populates="user", cascade="all, delete-orphan")
-
     tokens = relationship("Token", back_populates="user", cascade="all, delete-orphan")
 
-class User_History(Base):
-    __tablename__ = "user_history"
+class User_Progress(Base):
+    __tablename__ = "user_progress"
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
-    # course_id = Column(Integer, ForeignKey("course.id"))
-    # course_video_id = Column(Integer, ForeignKey("course_video.id"))
-    started_at = Column(Date)
-    ended_at = Column(Date)
-    started_time = Column(Time)
-    stoped_time = Column(Time)
-    duration = Column(Time)
+    enrolled_course_id = Column(UUID(as_uuid=True), ForeignKey("enrolled_course.id"))
+    enrolled_course_video_id = Column(UUID(as_uuid=True), ForeignKey("enrolled_course_video.id"))
+    started_at = Column(DateTime)
+    ended_at = Column(DateTime)
+    duration = Column(Float, default=0.0)
 
-    user = relationship("User", back_populates="history")
+    # relationship between user_progress and other tables
+    user = relationship("User", back_populates="progress")
+    enrolled_course = relationship("Enrolled_Course")
+    enrolled_course_video = relationship("Enrolled_Course_Video")
 
 class Achievement(Base):
     __tablename__ = "achievement"
@@ -64,9 +54,9 @@ class Achievement(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))        # link to user table via user_id
     title = Column(String)
-    detail = Column(String)
-    image = Column(String)
-    type = Column(String)
+    description = Column(String)
+    badge = Column(String)
+    category_id = Column(UUID(as_uuid=True), ForeignKey("category.id"))
     received_at = Column(Date)
 
     user = relationship("User", back_populates="achievement")
