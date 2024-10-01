@@ -3,6 +3,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 from uuid import UUID
 
+
 class UserCreate(BaseModel):
     username: str
     password: str
@@ -18,9 +19,10 @@ class UserCreate(BaseModel):
         elif year <= 1:
             return 1
         return year
-        
+
     class Config:
         from_attributes = True
+
 
 class UserLogin(BaseModel):
     username: str
@@ -28,6 +30,7 @@ class UserLogin(BaseModel):
 
     class Config:
         from_attributes = True
+
 
 # response that will shown when u want the detail of the user
 class UserDetail(BaseModel):
@@ -38,6 +41,7 @@ class UserDetail(BaseModel):
     year: int
     avatar: str
 
+
 # simple response if it work u can use it if not u can adjust it
 # updating the data for the user
 class UserUpdate(BaseModel):
@@ -45,15 +49,18 @@ class UserUpdate(BaseModel):
     lastname: Optional[str] = Form(None)
     email: Optional[EmailStr] = Form(None)
     year: Optional[int] = Form(None)
-    avatar: Optional[UploadFile] = File(None)
+    # avatar: Optional[UploadFile] = File(None)
 
     class Config:
         from_attributes = True
-    
+
+
 class UserDelete(BaseModel):
     id: UUID
+
     class Config:
         from_attributes = True
+
 
 class UserResponse(BaseModel):
     id: UUID
@@ -63,4 +70,3 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
-
