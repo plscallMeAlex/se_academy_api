@@ -49,7 +49,7 @@ def create_access_token(
     return token_str
 
 
-def check_token_valid(token: str, db: Session = Depends(db_dependency)):
+async def check_token_valid(token: str, db: Session = Depends(db_dependency)):
     token = db.query(token_mdl.Token).filter(token_mdl.Token.token == token).first()
 
     if not token:
