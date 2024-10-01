@@ -2,18 +2,21 @@
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class Setting(BaseSettings):
-    #Frontend URL
-    FRONTEND_URL:str
-    
+    # Frontend URL
+    FRONTEND_URL: str
+
     # Database
-    DB_URL:str
+    DB_URL: str
 
     # Token
-    SECRET_KEY:str
-    EXPIRE_TIME_HOURS:int
+    SECRET_KEY: str
+    EXPIRE_TIME_HOURS: int
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", case_sensitive=True)
+    model_config = SettingsConfigDict(
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=True
+    )
 
 
 # This will cache the settings because it's use a lot

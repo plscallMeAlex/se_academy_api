@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from uuid import uuid4
 from db.database import Base
 
+
 # For the categoritize the entities in the project
 class Category(Base):
     __tablename__ = "category"

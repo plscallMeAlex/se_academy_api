@@ -4,5 +4,5 @@ from .user import router as users
 from .course import router as course
 
 router = APIRouter()
-router.include_router(users, prefix="/user", tags=["user"])  
+router.include_router(users, prefix="/user", tags=["user"])
 router.include_router(course, prefix="/course", tags=["course"])

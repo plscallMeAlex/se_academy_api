@@ -19,4 +19,5 @@ def get_db():
     finally:
         db.close()
 
+
 db_dependency = get_db

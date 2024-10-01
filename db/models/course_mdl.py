@@ -1,4 +1,13 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float,DateTime,ARRAY,Enum as EnumType
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    ForeignKey,
+    Float,
+    DateTime,
+    ARRAY,
+    Enum as EnumType,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from uuid import uuid4
@@ -6,6 +15,7 @@ from datetime import datetime, timezone
 from db.models.enum_type import StatusEnum
 from db.models.category_mdl import Category
 from db.database import Base
+
 
 class Course(Base):
     __tablename__ = "course"
@@ -22,7 +32,10 @@ class Course(Base):
     total_duration = Column(Float, default=0.0)
     enrolled = Column(Integer, default=0)  # number of students enrolled in the course
 
-    course_video = relationship("Course_Video", back_populates="course", cascade="all, delete-orphan")
+    course_video = relationship(
+        "Course_Video", back_populates="course", cascade="all, delete-orphan"
+    )
+
 
 class Course_Video(Base):
     __tablename__ = "course_video"
