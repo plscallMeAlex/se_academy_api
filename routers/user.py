@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from db.database import db_dependency  # Adjust the import path as needed
 from db.models.user_mdl import User
-from db.schemas.user_sch import UserCreate, UserLogin, UserUpdate
+from db.schemas.user_sch import UserCreate, UserLogin, UserUpdate, UserDetail
 from typing import Annotated
 from crud import user_crud
 
@@ -36,3 +36,8 @@ async def update_avatar(
     db: Session = Depends(db_dependency),
 ):
     return await user_crud.user_update_avatar(user_id, avatar, db)
+
+
+@router.get("/{user_id}", response_model=UserDetail)
+async def get_user_by_id(user_id: str, db: Session = Depends(db_dependency)):
+    return await user_crud.get_user_by_id(user_id, db)

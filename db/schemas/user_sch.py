@@ -39,7 +39,11 @@ class UserDetail(BaseModel):
     lastname: str
     email: EmailStr
     year: int
-    avatar: str
+    avatar: Optional[str]
+    level: int
+    score: int
+    study_hours: int
+    status: str
 
 
 # simple response if it work u can use it if not u can adjust it
@@ -49,7 +53,6 @@ class UserUpdate(BaseModel):
     lastname: Optional[str] = Form(None)
     email: Optional[EmailStr] = Form(None)
     year: Optional[int] = Form(None)
-    # avatar: Optional[UploadFile] = File(None)
 
     class Config:
         from_attributes = True
