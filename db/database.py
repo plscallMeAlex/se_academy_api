@@ -1,7 +1,6 @@
 # This file for creating an instance of the database connection and session
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
 from settings import get_settings
 
 settings = get_settings()

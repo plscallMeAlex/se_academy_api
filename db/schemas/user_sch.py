@@ -49,7 +49,6 @@ class UserUpdate(BaseModel):
     lastname: Optional[str] = Form(None)
     email: Optional[EmailStr] = Form(None)
     year: Optional[int] = Form(None)
-    # avatar: Optional[UploadFile] = File(None)
 
     class Config:
         from_attributes = True
