@@ -1,23 +1,65 @@
-from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, Form
+from fastapi import APIRouter, Depends, UploadFile, File, Form
 from fastapi.responses import JSONResponse
-from typing import Optional
+from sqlalchemy.orm import Session
 from crud import course_crud
 from db.database import db_dependency
-from db.schemas.course_sch import CourseCreate
-import json
+from db.schemas.course_sch import (
+    CourseCreate,
+    CourseUpdate,
+    CourseDetail,
+    CourseVideoDetail,
+)
 
 router = APIRouter()
 
 
 @router.post("/create_course", response_class=JSONResponse)
 async def create_course(
-    course: CourseCreate = Depends(CourseCreate.as_form),
-    category_name: Optional[list[str]] = Form(None),
-    course_image: Optional[UploadFile] = File(None),
-    videos: Optional[list[UploadFile]] = File(None),
+    course: CourseCreate,
     db=Depends(db_dependency),
 ):
-    course_obj = course.model_dump()
-    return await course_crud.create_course(
-        course_obj, category_name, course_image, videos, db
-    )
+    course = course.model_dump()
+    return await course_crud.create_course(course, db)
+
+
+@router.get("/get_course/{course_id}", response_model=CourseDetail)
+async def get_course(course_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.get_course(course_id, db)
+
+
+@router.put("/update_course/{course_id}", response_class=JSONResponse)
+async def update_course(
+    course_id: str, course: CourseUpdate, db: Session = Depends(db_dependency)
+):
+    return await course_crud.update_course(course_id, course, db)
+
+
+@router.put("/update_course_image/{course_id}", response_class=JSONResponse)
+async def update_course_image(
+    course_id: str, image: UploadFile = File(None), db: Session = Depends(db_dependency)
+):
+    return await course_crud.update_course_image(course_id, image, db)
+
+
+@router.delete("/delete_course/{course_id}", response_class=JSONResponse)
+async def delete_course(course_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.delete_course(course_id, db)
+
+
+@router.post("/upload_video/{course_id}", response_class=JSONResponse)
+async def upload_video(
+    course_id: str,
+    videos: list[UploadFile] = File(None),
+    db: Session = Depends(db_dependency),
+):
+    return await course_crud.upload_video(course_id, videos, db)
+
+
+@router.get("/get_video/{video_id}", response_model=CourseVideoDetail)
+async def get_video(video_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.get_video(video_id, db)
+
+
+@router.delete("/delete_video/{video_id}", response_class=JSONResponse)
+async def delete_video(video_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.delete_video(video_id, db)
