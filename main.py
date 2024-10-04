@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from middleware import add_middleware
 from security import check_token_valid
 from routers.routes import router as api_router
@@ -62,6 +62,12 @@ app.mount(
 
 
 # add_middleware(app)
+
+app.mount(
+    "/images",
+    StaticFiles(directory="images"),
+    name="images",
+)
 
 
 # custom exception handler

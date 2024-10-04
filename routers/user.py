@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, Header, Form, UploadFile, File
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from sqlalchemy.orm import Session
 from db.database import db_dependency  # Adjust the import path as needed
 from db.models.user_mdl import User
@@ -20,6 +20,16 @@ async def register(user_create: UserCreate, db: Session = Depends(db_dependency)
     return user_crud.user_register(user_create, db)
 
 
+@router.get("/{user_id}", response_model=UserDetail)
+async def get_user(user_id: str, db: Session = Depends(db_dependency)):
+    return await user_crud.get_user(user_id, db)
+
+
+@router.get("/avatar/{user_id}")
+async def get_avatar(user_id: str, db: Session = Depends(db_dependency)):
+    return await user_crud.get_avatar(user_id, db)
+
+
 @router.put("/update_user/{user_id}", response_class=JSONResponse)
 async def update_user(
     user_id: str,
@@ -37,7 +47,6 @@ async def update_avatar(
 ):
     return await user_crud.user_update_avatar(user_id, avatar, db)
 
-
-@router.get("/{user_id}", response_model=UserDetail)
-async def get_user_by_id(user_id: str, db: Session = Depends(db_dependency)):
-    return await user_crud.get_user_by_id(user_id, db)
+@router.delete("/delete_user/{user_id}", response_class=JSONResponse)
+async def delete_user(user_id: str, db: Session = Depends(db_dependency)):
+    return await user_crud.user_delete(user_id, db)
