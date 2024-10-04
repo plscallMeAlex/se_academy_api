@@ -1,11 +1,12 @@
 from fastapi import HTTPException, Form, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
 from db.models.user_mdl import User
 from db.models.enum_type import RoleEnum, StatusEnum
 from db.schemas.user_sch import UserLogin, UserCreate, UserUpdate
 from security import create_access_token, verify_password, hash_password
+import base64
 
 
 # login user and assign the token to the user
@@ -17,7 +18,9 @@ def user_login(user: UserLogin, db: Session):
         raise HTTPException(status_code=401, detail="Invalid Password")
 
     token = create_access_token(db_user, db=db)
-    response = JSONResponse(content={"success": True}, status_code=200)
+    response = JSONResponse(
+        content={"success": True, "id": str(db_user.id)}, status_code=200
+    )
     response.headers["Authorization"] = token
     return response
 
@@ -52,6 +55,27 @@ def user_register(user_create: UserCreate, db: Session):
     db.refresh(db_user)
     response = JSONResponse(content={"success": True}, status_code=200)
     return response
+
+
+# get user detail
+async def get_user(user_id: str, db: Session):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+# get user avatar
+async def get_avatar(user_id: str, db: Session):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    if db_user.avatar is None:
+        raise HTTPException(status_code=404, detail="User avatar not found")
+
+    with open(db_user.avatar, "rb") as img:
+        base64_img = base64.b64encode(img.read())
+    return base64_img
 
 
 # for update information of the user
@@ -93,3 +117,14 @@ async def user_update_avatar(user_id: str, avatar: UploadFile, db: Session):
     db.refresh(db_user)
     response = JSONResponse(content={"success": True}, status_code=200)
     return response
+
+
+# for delete the user
+async def user_delete(user_id: str, db: Session):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    db.delete(db_user)
+    db.commit()
+    return JSONResponse(content={"success": True}, status_code=200)
