@@ -47,7 +47,6 @@ async def update_avatar(
 ):
     return await user_crud.user_update_avatar(user_id, avatar, db)
 
-
 @router.delete("/delete_user/{user_id}", response_class=JSONResponse)
 async def delete_user(user_id: str, db: Session = Depends(db_dependency)):
     return await user_crud.user_delete(user_id, db)
