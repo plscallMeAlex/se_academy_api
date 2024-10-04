@@ -2,7 +2,7 @@ from settings import get_settings
 from security import check_token_valid
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 
 settings = get_settings()
 
@@ -41,10 +41,9 @@ def add_middleware(app: FastAPI) -> FastAPI:
             check_token_valid(token)
         except HTTPException as e:
             return JSONResponse(
-                content={"success": False, "error_mg": str(e.detail)},
+                content={"success": False, "error_msg": str(e.detail)},
                 status_code=e.status_code,
             )
-
         response = await call_next(request)
         return response
 
