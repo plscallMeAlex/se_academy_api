@@ -8,15 +8,6 @@ settings = get_settings()
 
 
 def add_middleware(app: FastAPI) -> FastAPI:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=["*"],  # Adjust to only allow specific origins
-        allow_credentials=True,
-        allow_methods=["*"],  # Allow all HTTP methods
-        allow_headers=["*"],  # Allow all headers
-        expose_headers=["Authorization"],  # Expose all headers
-    )
-
     # comment first to testing api
     @app.middleware("http")
     async def check_token(request: Request, call_next):
@@ -46,5 +37,14 @@ def add_middleware(app: FastAPI) -> FastAPI:
             )
         response = await call_next(request)
         return response
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],  # Adjust to only allow specific origins
+        allow_credentials=True,
+        allow_methods=["*"],  # Allow all HTTP methods
+        allow_headers=["*"],  # Allow all headers
+        expose_headers=["Authorization"],  # Expose all headers
+    )
 
     return app
