@@ -2,9 +2,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from middleware import add_middleware
-from security import check_token_valid
 from routers.routes import router as api_router
-from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
 app.include_router(api_router)
