@@ -24,7 +24,7 @@ class Course(Base):
     title = Column(String)
     description = Column(String)
     subjectid = Column(String, default="DEV101")
-    course_image = Column(String, default="/images/default.jpg")
+    course_image = Column(String, default="images/default.jpg")
     category_list = Column(ARRAY(String), default=[])
     year = Column(Integer)
     lecturer = Column(String)
