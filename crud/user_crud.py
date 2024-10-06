@@ -117,8 +117,7 @@ async def user_update_avatar(user_id: str, avatar: UploadFile, db: Session):
     db.refresh(db_user)
     response = JSONResponse(content={"success": True}, status_code=200)
     return response
-
-
+  
 # for delete the user
 async def user_delete(user_id: str, db: Session):
     db_user = db.query(User).filter(User.id == user_id).first()
@@ -128,3 +127,4 @@ async def user_delete(user_id: str, db: Session):
     db.delete(db_user)
     db.commit()
     return JSONResponse(content={"success": True}, status_code=200)
+

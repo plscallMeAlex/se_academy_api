@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form
+from fastapi import APIRouter, Depends, UploadFile, File, Form, Body
 from fastapi.responses import JSONResponse
+from typing import Annotated
 from sqlalchemy.orm import Session
 from crud import course_crud
 from db.database import db_dependency
@@ -27,16 +28,23 @@ async def get_course(course_id: str, db: Session = Depends(db_dependency)):
     return await course_crud.get_course(course_id, db)
 
 
-@router.put("/update_course/{course_id}", response_class=JSONResponse)
+@router.get("/get_courses", response_model=list[CourseDetail])
+async def get_courses(db: Session = Depends(db_dependency)):
+    return await course_crud.get_courses(db)
+
+
+@router.patch("/update_course/{course_id}", response_class=JSONResponse)
 async def update_course(
-    course_id: str, course: CourseUpdate, db: Session = Depends(db_dependency)
+    course_id: str,
+    course: CourseUpdate,
+    db: Session = Depends(db_dependency),
 ):
     return await course_crud.update_course(course_id, course, db)
 
 
 @router.put("/update_course_image/{course_id}", response_class=JSONResponse)
 async def update_course_image(
-    course_id: str, image: UploadFile = File(None), db: Session = Depends(db_dependency)
+    course_id: str, image: UploadFile = File(...), db: Session = Depends(db_dependency)
 ):
     return await course_crud.update_course_image(course_id, image, db)
 

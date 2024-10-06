@@ -29,26 +29,12 @@ async def get_course(course_id: str, db: Session):
     course = db.query(Course).filter(Course.id == course_id).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
+    return course
 
-    response_data = {
-        "id": course.id,
-        "title": course.title,
-        "description": course.description,
-        "subjectid": course.subjectid,  # Include subjectid
-        "course_image": course.course_image,
-        "category_list": course.category_list,  # Use the existing field
-        "year": course.year,
-        "lecturer": course.lecturer,
-        "created_at": course.created_at.strftime(
-            "%Y-%m-%d %H:%M:%S"
-        ),  # Convert datetime to string
-        "status": course.status,
-        "total_video": course.total_video,
-        "total_duration": course.total_duration,
-        "enrolled": course.enrolled,
-    }
 
-    return response_data
+async def get_courses(db: Session):
+    courses = db.query(Course).all()
+    return courses
 
 
 # update the course information
@@ -57,9 +43,10 @@ async def update_course(course_id: str, course_update: CourseUpdate, db: Session
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
 
-    # handle the q values because some field may be None
-    new_course = {k: v for k, v in course_update.model_dump().items() if v is not None}
-    course = course.update(new_course)
+    for key, value in course_update.model_dump(exclude_unset=True).items():
+        setattr(course, key, value)
+
+    db.add(course)
     db.commit()
     db.refresh(course)
     return JSONResponse(content={"success": True}, status_code=200)
@@ -86,6 +73,7 @@ async def update_course_image(course_id: str, course_image: UploadFile, db: Sess
         img.write(image_data)
 
     course.course_image = saveto
+    db.add(course)
     db.commit()
     db.refresh(course)
 
