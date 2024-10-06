@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.staticfiles import StaticFiles
 from middleware import add_middleware
 from routers.routes import router as api_router
 
@@ -9,12 +8,6 @@ app.include_router(api_router)
 
 # add middleware
 add_middleware(app)
-
-app.mount(
-    "/images",
-    StaticFiles(directory="images"),
-    name="images",
-)
 
 
 # custom exception handler
