@@ -30,7 +30,7 @@ class User(Base):
     lastname = Column(String)
     year = Column(Integer)
     email = Column(String, unique=True, index=True)
-    avatar = Column(String, default="/images/default_user.png")
+    avatar = Column(String, default="images/default_user.png")
     role = Column(EnumType(RoleEnum, name="roleenum"), default=RoleEnum.freshman)
     level = Column(MySQLInteger(unsigned=True), default=1)
     score = Column(MySQLInteger(unsigned=True), default=0)

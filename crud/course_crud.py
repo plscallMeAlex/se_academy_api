@@ -9,6 +9,7 @@ from db.schemas.course_sch import (
     CourseUpdate,
 )
 from moviepy.editor import VideoFileClip
+import base64
 
 
 # create the course and add it to the database
@@ -35,6 +36,16 @@ async def get_course(course_id: str, db: Session):
 async def get_courses(db: Session):
     courses = db.query(Course).all()
     return courses
+
+
+async def get_course_img(course_id: str, db: Session):
+    course = db.query(Course).filter(Course.id == course_id).first()
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    with open(course.course_image, "rb") as img:
+        base64_img = base64.b64encode(img.read())
+    return base64_img
 
 
 # update the course information

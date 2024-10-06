@@ -33,6 +33,11 @@ async def get_courses(db: Session = Depends(db_dependency)):
     return await course_crud.get_courses(db)
 
 
+@router.get("/get_course_img/{course_id}", response_class=JSONResponse)
+async def get_course_img(course_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.get_course_img(course_id, db)
+
+
 @router.patch("/update_course/{course_id}", response_class=JSONResponse)
 async def update_course(
     course_id: str,
