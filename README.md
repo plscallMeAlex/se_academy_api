@@ -34,17 +34,9 @@ After cloning this project, follow these steps:
 
 4. Run the API:
 
-   - With FastAPI:
-
-     ```bash
-         fastapi run main.py
-     ```
-
-   - With Uvicorn server:
-
-     ```bash
+    ```bash
          uvicorn main:app --reload
-     ```
+    ```
 
 ## Alembic migration to creating database
 
@@ -52,13 +44,14 @@ If you want to creating the table using command:
 
 ```bash
     alembic revision --autogenerate -m "{message}"
-    alembic upgrade head
 ```
 
 If you want to upgrade the migrate Using this command:
 
 ```bash
     alembic upgrade head
+    or
+    alembic upgrade +1
 ```
 
 for downgrade the base:
