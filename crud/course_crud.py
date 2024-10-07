@@ -1,4 +1,6 @@
 import os
+import base64
+import mimetypes
 from fastapi import HTTPException, File, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy import func
@@ -9,7 +11,6 @@ from db.schemas.course_sch import (
     CourseUpdate,
 )
 from moviepy.editor import VideoFileClip
-import base64
 
 
 # Course Section
@@ -135,6 +136,7 @@ async def upload_video(course_id: str, videos: list[UploadFile], db: Session):
             .first()
         )
 
+        # check whether the video is already in the directory
         video_in_dir = False
         try:
             with open(f"videos/{video.filename}", "r") as f:
@@ -151,6 +153,7 @@ async def upload_video(course_id: str, videos: list[UploadFile], db: Session):
                 detail=f"Video {video.filename} already exists in the course",
             )
 
+        # save the video to the directory
         saveto = f"videos/{video.filename}"
         with open(saveto, "wb") as vid:
             vid.write(video_data)
@@ -198,6 +201,12 @@ async def get_video(video_id: str, db: Session):
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
 
+    video_path = video.video_path
+    mime_type, _ = mimetypes.guess_type(video_path)
+
+    if not mime_type:
+        mime_type = "application/octet-stream"
+
     def iterfile():
         with open(video.video_path, "rb") as vid:
             while True:
@@ -206,7 +215,7 @@ async def get_video(video_id: str, db: Session):
                     break
                 yield chunk
 
-    return StreamingResponse(iterfile(), media_type="video/mp4")
+    return StreamingResponse(iterfile(), media_type=mime_type)
 
 
 # delete the video video id and remove it from the database
