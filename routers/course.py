@@ -14,6 +14,7 @@ from db.schemas.course_sch import (
 router = APIRouter()
 
 
+# Course Section
 @router.post("/create_course", response_class=JSONResponse)
 async def create_course(
     course: CourseCreate,
@@ -59,6 +60,7 @@ async def delete_course(course_id: str, db: Session = Depends(db_dependency)):
     return await course_crud.delete_course(course_id, db)
 
 
+# Video Section
 @router.post("/upload_video/{course_id}", response_class=JSONResponse)
 async def upload_video(
     course_id: str,
@@ -68,7 +70,17 @@ async def upload_video(
     return await course_crud.upload_video(course_id, videos, db)
 
 
-@router.get("/get_video/{video_id}", response_model=CourseVideoDetail)
+@router.get("/get_video_detail/{video_id}", response_model=CourseVideoDetail)
+async def get_video_detail(video_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.get_video(video_id, db)
+
+
+@router.get("/get_videos_detail/{course_id}", response_model=list[CourseVideoDetail])
+async def get_videos_detail(course_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.get_videos_detail(course_id, db)
+
+
+@router.get("/get_video/{video_id}")
 async def get_video(video_id: str, db: Session = Depends(db_dependency)):
     return await course_crud.get_video(video_id, db)
 

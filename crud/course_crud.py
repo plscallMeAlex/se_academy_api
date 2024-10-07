@@ -1,6 +1,6 @@
 import os
 from fastapi import HTTPException, File, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from db.models.course_mdl import Course, Course_Video
@@ -10,6 +10,9 @@ from db.schemas.course_sch import (
 )
 from moviepy.editor import VideoFileClip
 import base64
+
+
+# Course Section
 
 
 # create the course and add it to the database
@@ -104,6 +107,10 @@ async def delete_course(course_id: str, db: Session):
     return JSONResponse(content={"success": True}, status_code=200)
 
 
+# Video Section
+CHUNK_SIZE = 1024 * 1024
+
+
 # upload the video the course and add it to the database
 async def upload_video(course_id: str, videos: list[UploadFile], db: Session):
     course = db.query(Course).filter(Course.id == course_id).first()
@@ -169,19 +176,37 @@ async def upload_video(course_id: str, videos: list[UploadFile], db: Session):
 
 
 # get the detail of the video
+async def get_video_detail(video_id: str, db: Session):
+    video = db.query(Course_Video).filter(Course_Video.id == video_id).first()
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    return video
+
+
+# get the detail of the videos in the course
+async def get_videos_detail(course_id: str, db: Session):
+    videos = db.query(Course_Video).filter(Course_Video.course_id == course_id).all()
+    if not videos:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return videos
+
+
+# get the video and return as a stream of video
 async def get_video(video_id: str, db: Session):
     video = db.query(Course_Video).filter(Course_Video.id == video_id).first()
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
 
-    response_data = {
-        "id": video.id,
-        "title": video.title,
-        "video_path": video.video_path,
-        "duration": video.duration,
-    }
+    def iterfile():
+        with open(video.video_path, "rb") as vid:
+            while True:
+                chunk = vid.read(CHUNK_SIZE)
+                if not chunk:
+                    break
+                yield chunk
 
-    return response_data
+    return StreamingResponse(iterfile(), media_type="video/mp4")
 
 
 # delete the video video id and remove it from the database
