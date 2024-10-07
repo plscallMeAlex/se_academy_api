@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form, Body
+from fastapi import APIRouter, Depends, UploadFile, File, Query
 from fastapi.responses import JSONResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -37,6 +37,31 @@ async def get_courses(db: Session = Depends(db_dependency)):
 @router.get("/get_course_img/{course_id}", response_class=JSONResponse)
 async def get_course_img(course_id: str, db: Session = Depends(db_dependency)):
     return await course_crud.get_course_img(course_id, db)
+
+
+@router.get("/search_courses", response_model=list[CourseDetail])
+async def filter_courses(
+    course_name: str = Query(...),
+    status: str = Query(...),
+    db: Session = Depends(db_dependency),
+):
+    return await course_crud.search_courses(course_name, status, db)
+
+
+@router.get("/filter_courses_by_status", response_model=list[CourseDetail])
+async def filter_courses_by_status(
+    status: str = Query(...),
+    db: Session = Depends(db_dependency),
+):
+    return await course_crud.filter_courses_by_status(status, db)
+
+
+@router.get("/filter_courses_by_category", response_model=list[CourseDetail])
+async def filter_courses_by_category(
+    category: str = Query(...),
+    db: Session = Depends(db_dependency),
+):
+    return await course_crud.filter_courses_by_category(category, db)
 
 
 @router.patch("/update_course/{course_id}", response_class=JSONResponse)

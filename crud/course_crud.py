@@ -41,6 +41,37 @@ async def get_courses(db: Session):
     return courses
 
 
+async def search_courses(course_name: str, status: str, db: Session):
+
+    if status == "all":
+        courses = db.query(Course).filter(Course.title.like(f"%{course_name}%")).all()
+    else:
+        courses = (
+            db.query(Course)
+            .filter(Course.title.like(f"%{course_name}%"))
+            .filter(Course.status == status)
+            .all()
+        )
+    return courses
+
+
+async def filter_courses_by_status(status: str, db: Session):
+    if status == "all":
+        courses = db.query(Course).all()
+    else:
+        courses = db.query(Course).filter(Course.status == status).all()
+    return courses
+
+
+async def filter_courses_by_category(category: str, db: Session):
+    if category == "all":
+        courses = db.query(Course).all()
+    else:
+        courses = db.query(Course).filter(Course.category_list.any(category)).all()
+
+    return courses
+
+
 async def get_course_img(course_id: str, db: Session):
     course = db.query(Course).filter(Course.id == course_id).first()
     if not course:
