@@ -21,6 +21,9 @@ class EnrolledCourseDetail(BaseModel):
     enrolled_at: datetime
     ended_at: datetime
 
+    class Config:
+        from_attributes = True
+
 
 # to update the course ended
 class EnrolledCourseUpdate(BaseModel):
