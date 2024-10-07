@@ -24,6 +24,7 @@ class Enrolled_Course_Video(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
+    enrolled_course_id = Column(UUID(as_uuid=True), ForeignKey("enrolled_course.id"))
     course_video_id = Column(UUID(as_uuid=True), ForeignKey("course_video.id"))
     status = Column(Boolean)
     timestamp = Column(Float, default=0.0)

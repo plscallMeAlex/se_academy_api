@@ -30,12 +30,6 @@ class EnrolledCourseUpdate(BaseModel):
     ended_at: Optional[datetime]
 
 
-# to change the state or update the enrolled course
-class EnrolledCourseDelete(BaseModel):
-    user_id: UUID
-    course_id: UUID
-
-
 """SCHEMAS FOR ENROLLED COURSE VIDEO"""
 
 # Enrolled Course Video Schemas
@@ -46,6 +40,7 @@ class EnrolledCourseDelete(BaseModel):
 # timestamp for user for making a good experience
 class EnrolledCourseVideoCreate(BaseModel):
     user_id: UUID
+    enrolled_course_id: UUID
     course_video_id: UUID
 
 
@@ -55,14 +50,11 @@ class EnrolledCourseVideoDetail(BaseModel):
     status: bool
     timestamp: float
 
+    class Config:
+        from_attributes = True
+
 
 # to update the video status or timestamp
 class EnrolledCourseVideoUpdate(BaseModel):
     status: Optional[bool]
     timestamp: Optional[float]
-
-
-# to delete the video from the enrolled course video
-class EnrolledCourseVideoDelete(BaseModel):
-    user_id: UUID
-    course_video_id: UUID

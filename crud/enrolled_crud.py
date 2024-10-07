@@ -1,12 +1,13 @@
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
-from db.models.user_mdl import User, Enrolled_Course
+from db.models.user_mdl import User
+from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
 from db.schemas.enrolled_sch import (
     EnrolledCourseCreate,
-    EnrolledCourseDetail,
     EnrolledCourseUpdate,
-    EnrolledCourseDelete,
+    EnrolledCourseVideoCreate,
+    EnrolledCourseVideoUpdate,
 )
 from datetime import datetime, timezone
 
@@ -81,5 +82,64 @@ async def delete_enrolled_course(enrolled_course_id: str, db: Session):
 
     return JSONResponse(
         content={"success": True, "detail": "Remove the course success"},
+        status_code=200,
+    )
+
+
+# Enrolled course video Section
+
+
+# for the user when play the video first time
+async def create_enrolled_course_video(
+    enrolled_course_video: EnrolledCourseVideoCreate, db: Session
+):
+    enrolled_course_video = enrolled_course_video.model_dump()
+
+    db.add(enrolled_course_video)
+    db.commit()
+    db.refresh(enrolled_course_video)
+
+    return JSONResponse(content={"success": True}, status_code=200)
+
+
+# get the detail of the video timestamp
+async def get_enrolled_course_video_detail(enrolled_course_video_id: str, db: Session):
+    enrolled_course_video = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.id == enrolled_course_video_id)
+        .first()
+    )
+
+    if not enrolled_course_video:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    return enrolled_course_video
+
+
+# update the video status or timestamp
+async def update_enrolled_course_video(
+    enrolled_course_video_id: str,
+    enrolled_course_video: EnrolledCourseVideoUpdate,
+    db: Session,
+):
+    enrolled_course_video = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.id == enrolled_course_video_id)
+        .first()
+    )
+
+    if not enrolled_course_video:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    if enrolled_course_video.status is not None:
+        enrolled_course_video.status = enrolled_course_video.status
+
+    if enrolled_course_video.timestamp is not None:
+        enrolled_course_video.timestamp = enrolled_course_video.timestamp
+
+    db.commit()
+    db.refresh(enrolled_course_video)
+    return JSONResponse(
+        content={"success": True, "detail": "Update the video detail success"},
         status_code=200,
     )
