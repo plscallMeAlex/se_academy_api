@@ -5,6 +5,7 @@ from fastapi import HTTPException, File, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy import func
 from sqlalchemy.orm import Session
+from db.models.category_mdl import Category
 from db.models.course_mdl import Course, Course_Video
 from db.schemas.course_sch import (
     CourseCreate,
@@ -71,6 +72,15 @@ async def filter_courses_by_category(category: str, db: Session):
         courses = db.query(Course).filter(Course.category_list.any(category)).all()
 
     return courses
+
+
+async def get_categories(db: Session):
+    categories = db.query(Category).all()
+    categories = [category.name for category in categories]
+    return categories
+
+
+# Course Section
 
 
 async def get_course_img(course_id: str, db: Session):
