@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from db.models.user_mdl import User
+from db.models.course_mdl import Course
 from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
 from db.schemas.enrolled_sch import (
     EnrolledCourseCreate,
@@ -17,11 +18,23 @@ from datetime import datetime, timezone
 
 # for the user when they enroll the course
 async def create_enrolled_course(enrolled_course: EnrolledCourseCreate, db: Session):
-    enrolled_course = enrolled_course.model_dump()
-    enrolled_course.enrolled_at = datetime.now(timezone.utc)
+    enrolled_course = Enrolled_Course(**enrolled_course.model_dump())
     db.add(enrolled_course)
     db.commit()
     db.refresh(enrolled_course)
+
+    enrolled_course.course.enrolled += 1
+    db.commit()
+
+    # creating the enrolled course video via relationship
+    for course_video in enrolled_course.course.course_video:
+        enrolled_course_video = Enrolled_Course_Video(
+            user_id=enrolled_course.user_id,
+            enrolled_course_id=enrolled_course.id,
+            course_video_id=course_video.id,
+        )
+        db.add(enrolled_course_video)
+        db.commit()
 
     return JSONResponse(content={"success": True}, status_code=200)
 
@@ -90,16 +103,16 @@ async def delete_enrolled_course(enrolled_course_id: str, db: Session):
 
 
 # for the user when play the video first time
-async def create_enrolled_course_video(
-    enrolled_course_video: EnrolledCourseVideoCreate, db: Session
-):
-    enrolled_course_video = enrolled_course_video.model_dump()
+# async def create_enrolled_course_video(
+#     enrolled_course_video: EnrolledCourseVideoCreate, db: Session
+# ):
+#     enrolled_course_video = enrolled_course_video.model_dump()
 
-    db.add(enrolled_course_video)
-    db.commit()
-    db.refresh(enrolled_course_video)
+#     db.add(enrolled_course_video)
+#     db.commit()
+#     db.refresh(enrolled_course_video)
 
-    return JSONResponse(content={"success": True}, status_code=200)
+#     return JSONResponse(content={"success": True}, status_code=200)
 
 
 # get the detail of the video timestamp

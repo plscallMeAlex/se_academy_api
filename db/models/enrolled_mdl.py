@@ -26,7 +26,7 @@ class Enrolled_Course_Video(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
     enrolled_course_id = Column(UUID(as_uuid=True), ForeignKey("enrolled_course.id"))
     course_video_id = Column(UUID(as_uuid=True), ForeignKey("course_video.id"))
-    status = Column(Boolean)
+    status = Column(Boolean, default=False)
     timestamp = Column(Float, default=0.0)
 
     course_video = relationship("Course_Video")
