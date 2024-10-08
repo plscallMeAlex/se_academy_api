@@ -100,6 +100,20 @@ async def update_course(course_id: str, course_update: CourseUpdate, db: Session
         raise HTTPException(status_code=404, detail="Course not found")
 
     for key, value in course_update.model_dump(exclude_unset=True).items():
+        if key == "category_list":
+            for category in value:
+                category_lower = category.lower()
+
+                exist_category = db.query(Category).all()
+
+                if not any(
+                    category_lower in cat.name.lower() for cat in exist_category
+                ):
+                    new_category = Category(name=category_lower)
+                    db.add(new_category)
+                    db.commit()
+                    db.refresh(new_category)
+
         setattr(course, key, value)
 
     db.add(course)
