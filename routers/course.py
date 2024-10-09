@@ -9,6 +9,7 @@ from db.schemas.course_sch import (
     CourseUpdate,
     CourseDetail,
     CourseVideoDetail,
+    CourseVideoUpdate,
 )
 
 router = APIRouter()
@@ -113,6 +114,15 @@ async def get_videos_detail(course_id: str, db: Session = Depends(db_dependency)
 @router.get("/get_video/{video_id}")
 async def get_video(video_id: str, db: Session = Depends(db_dependency)):
     return await course_crud.get_video(video_id, db)
+
+
+@router.patch("/update_video/{video_id}", response_class=JSONResponse)
+async def update_video(
+    video_id: str,
+    video: CourseVideoUpdate,
+    db: Session = Depends(db_dependency),
+):
+    return await course_crud.update_video(video_id, video, db)
 
 
 @router.delete("/delete_video/{video_id}", response_class=JSONResponse)

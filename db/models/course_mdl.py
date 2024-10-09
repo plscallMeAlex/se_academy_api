@@ -44,7 +44,9 @@ class Course_Video(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     course_id = Column(UUID(as_uuid=True), ForeignKey("course.id"))
+    chapter = Column(Integer, default=0)
     title = Column(String)
+    video_description = Column(String, default="lorem ipsum")
     video_path = Column(String)
     duration = Column(Float, default=0.0)
 

@@ -7,10 +7,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 from db.models.category_mdl import Category
 from db.models.course_mdl import Course, Course_Video
-from db.schemas.course_sch import (
-    CourseCreate,
-    CourseUpdate,
-)
+from db.schemas.course_sch import CourseCreate, CourseUpdate, CourseVideoUpdate
 from moviepy.editor import VideoFileClip
 
 
@@ -271,6 +268,25 @@ async def get_video(video_id: str, db: Session):
                 yield chunk
 
     return StreamingResponse(iterfile(), media_type=mime_type)
+
+
+async def update_video(video_id: str, video: CourseVideoUpdate, db: Session):
+    course_video = db.query(Course_Video).filter(Course_Video.id == video_id).first()
+    if not course_video:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    for key, value in video.model_dump(exclude_unset=True).items():
+        if value == None:
+            continue
+        setattr(course_video, key, value)
+
+    db.add(course_video)
+    db.commit()
+    db.refresh(course_video)
+    return JSONResponse(
+        content={"success": True, "detail": f"Update video {video_id} detail success"},
+        status_code=200,
+    )
 
 
 # delete the video video id and remove it from the database

@@ -15,6 +15,16 @@ class CourseVideoDetail(BaseModel):
     video_path: str
     duration: float
 
+    class Config:
+        from_attributes = True
+
+
+class CourseVideoUpdate(BaseModel):
+    chapter: Optional[int] = None
+    title: Optional[str] = None
+    video_description: Optional[str] = None
+    video_path: Optional[str] = None
+
 
 """SCHEMAS FOR COURSE"""
 # Course Schemas
