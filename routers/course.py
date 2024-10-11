@@ -103,7 +103,7 @@ async def upload_video(
 
 @router.get("/get_video_detail/{video_id}", response_model=CourseVideoDetail)
 async def get_video_detail(video_id: str, db: Session = Depends(db_dependency)):
-    return await course_crud.get_video(video_id, db)
+    return await course_crud.get_video_detail(video_id, db)
 
 
 @router.get("/get_videos_detail/{course_id}", response_model=list[CourseVideoDetail])

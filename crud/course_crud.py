@@ -241,7 +241,12 @@ async def get_video_detail(video_id: str, db: Session):
 
 # get the detail of the videos in the course
 async def get_videos_detail(course_id: str, db: Session):
-    videos = db.query(Course_Video).filter(Course_Video.course_id == course_id).all()
+    videos = (
+        db.query(Course_Video)
+        .filter(Course_Video.course_id == course_id)
+        .order_by(Course_Video.chapter)
+        .all()
+    )
     if not videos:
         raise HTTPException(status_code=404, detail="Video not found")
     return videos

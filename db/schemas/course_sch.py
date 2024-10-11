@@ -11,7 +11,9 @@ from datetime import datetime
 # the detail that will be shown when the video is requested
 class CourseVideoDetail(BaseModel):
     id: UUID
+    chapter: Optional[int] = None
     title: str
+    video_description: Optional[str] = None
     video_path: str
     duration: float
 
