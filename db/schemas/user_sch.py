@@ -44,6 +44,7 @@ class UserDetail(BaseModel):
     score: int
     study_hours: int
     status: str
+    role: str
 
 
 # simple response if it work u can use it if not u can adjust it

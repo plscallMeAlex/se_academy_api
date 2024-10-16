@@ -19,7 +19,8 @@ def user_login(user: UserLogin, db: Session):
 
     token = create_access_token(db_user, db=db)
     response = JSONResponse(
-        content={"success": True, "id": str(db_user.id)}, status_code=200
+        content={"success": True, "id": str(db_user.id), "role": db_user.role},
+        status_code=200,
     )
     response.headers["Authorization"] = token
     return response
@@ -117,7 +118,8 @@ async def user_update_avatar(user_id: str, avatar: UploadFile, db: Session):
     db.refresh(db_user)
     response = JSONResponse(content={"success": True}, status_code=200)
     return response
-  
+
+
 # for delete the user
 async def user_delete(user_id: str, db: Session):
     db_user = db.query(User).filter(User.id == user_id).first()
@@ -127,4 +129,3 @@ async def user_delete(user_id: str, db: Session):
     db.delete(db_user)
     db.commit()
     return JSONResponse(content={"success": True}, status_code=200)
-
