@@ -18,8 +18,8 @@ class EnrolledCourseDetail(BaseModel):
     id: UUID
     user_id: UUID
     course_id: UUID
-    enrolled_at: datetime
-    ended_at: datetime
+    enrolled_at: Optional[datetime]
+    ended_at: Optional[datetime]
 
     class Config:
         from_attributes = True

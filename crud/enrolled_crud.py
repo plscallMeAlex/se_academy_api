@@ -18,6 +18,14 @@ from datetime import datetime, timezone
 
 # for the user when they enroll the course
 async def create_enrolled_course(enrolled_course: EnrolledCourseCreate, db: Session):
+    if (
+        db.query(Enrolled_Course)
+        .filter(Enrolled_Course.user_id == enrolled_course.user_id)
+        .first()
+        is not None
+    ):
+        raise HTTPException(status_code=400, detail="User already enrolled the course")
+
     enrolled_course = Enrolled_Course(**enrolled_course.model_dump())
     db.add(enrolled_course)
     db.commit()
