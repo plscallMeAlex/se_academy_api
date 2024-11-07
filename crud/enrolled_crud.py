@@ -21,6 +21,7 @@ async def create_enrolled_course(enrolled_course: EnrolledCourseCreate, db: Sess
     if (
         db.query(Enrolled_Course)
         .filter(Enrolled_Course.user_id == enrolled_course.user_id)
+        .filter(Enrolled_Course.course_id == enrolled_course.course_id)
         .first()
         is not None
     ):
@@ -60,6 +61,33 @@ async def get_enrolled_course(user_id: str, db: Session):
         raise HTTPException(status_code=404, detail="Course not found")
 
     return enrolled_course
+
+
+# check if the user has enrolled the course
+async def check_enrolled_course(user_id: str, course_id: str, db: Session):
+    if db.query(User).filter(User.id == user_id).first() is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    if db.query(Course).filter(Course.id == course_id).first() is None:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    enrolled_course = (
+        db.query(Enrolled_Course)
+        .filter(Enrolled_Course.user_id == user_id)
+        .filter(Enrolled_Course.course_id == course_id)
+        .first()
+    )
+
+    if not enrolled_course:
+        return JSONResponse(
+            content={"success": False, "detail": "User not enrolled the course"},
+            status_code=200,
+        )
+
+    return JSONResponse(
+        content={"success": True, "detail": "User already enrolled the course"},
+        status_code=200,
+    )
 
 
 # update the enrolled course end date
