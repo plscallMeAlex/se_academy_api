@@ -62,21 +62,24 @@ async def create_enrolled_course_video(
 
 
 @router.get(
-    "/get_enrolled_course_video/{enrolled_course_video_id}",
+    "/get_enrolled_course_video/{user_id}/{course_video_id}",
     response_model=EnrolledCourseVideoDetail,
 )
 async def get_enrolled_course_video(
-    enrolled_course_video_id: str, db: Session = Depends(db_dependency)
+    user_id: str, course_video_id, db: Session = Depends(db_dependency)
 ):
-    return await enrolled_crud.get_enrolled_course_video(enrolled_course_video_id, db)
+    return await enrolled_crud.get_enrolled_course_video_detail(
+        user_id, course_video_id, db
+    )
 
 
-@router.put("/update_enrolled_course_video/{enrolled_course_video_id}")
+@router.put("/update_enrolled_course_video/{user_id}/{course_video_id}")
 async def update_enrolled_course_video(
-    enrolled_course_video_id: str,
+    user_id: str,
+    course_video_id: str,
     enrolled_course_video: EnrolledCourseVideoUpdate,
     db: Session = Depends(db_dependency),
 ):
     return await enrolled_crud.update_enrolled_course_video(
-        enrolled_course_video_id, enrolled_course_video, db
+        user_id, course_video_id, enrolled_course_video, db
     )

@@ -152,10 +152,13 @@ async def delete_enrolled_course(enrolled_course_id: str, db: Session):
 
 
 # get the detail of the video timestamp
-async def get_enrolled_course_video_detail(enrolled_course_video_id: str, db: Session):
+async def get_enrolled_course_video_detail(
+    user_id: str, course_video_id: str, db: Session
+):
     enrolled_course_video = (
         db.query(Enrolled_Course_Video)
-        .filter(Enrolled_Course_Video.id == enrolled_course_video_id)
+        .filter(Enrolled_Course_Video.user_id == user_id)
+        .filter(Enrolled_Course_Video.course_video_id == course_video_id)
         .first()
     )
 
@@ -167,27 +170,31 @@ async def get_enrolled_course_video_detail(enrolled_course_video_id: str, db: Se
 
 # update the video status or timestamp
 async def update_enrolled_course_video(
-    enrolled_course_video_id: str,
+    user_id: str,
+    course_video_id: str,
     enrolled_course_video: EnrolledCourseVideoUpdate,
     db: Session,
 ):
-    enrolled_course_video = (
+    db_enrolled_course_video = (
         db.query(Enrolled_Course_Video)
-        .filter(Enrolled_Course_Video.id == enrolled_course_video_id)
+        .filter(Enrolled_Course_Video.user_id == user_id)
+        .filter(Enrolled_Course_Video.course_video_id == course_video_id)
         .first()
     )
+
+    print("enrolled_course_video", enrolled_course_video.timestamp)
 
     if not enrolled_course_video:
         raise HTTPException(status_code=404, detail="Video not found")
 
     if enrolled_course_video.status is not None:
-        enrolled_course_video.status = enrolled_course_video.status
+        db_enrolled_course_video.status = enrolled_course_video.status
 
     if enrolled_course_video.timestamp is not None:
-        enrolled_course_video.timestamp = enrolled_course_video.timestamp
+        db_enrolled_course_video.timestamp = enrolled_course_video.timestamp
 
     db.commit()
-    db.refresh(enrolled_course_video)
+    db.refresh(db_enrolled_course_video)
     return JSONResponse(
         content={"success": True, "detail": "Update the video detail success"},
         status_code=200,
