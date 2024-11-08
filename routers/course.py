@@ -40,6 +40,16 @@ async def get_categorys(db: Session = Depends(db_dependency)):
     return await course_crud.get_categories(db)
 
 
+@router.get("/category")
+async def get_categories_detail(db: Session = Depends(db_dependency)):
+    return await course_crud.get_categories_detail(db)
+
+
+@router.get("/category/{category_id}")
+async def get_category_detail(category_id: str, db: Session = Depends(db_dependency)):
+    return await course_crud.get_category_detail(category_id, db)
+
+
 @router.get("/get_course_img/{course_id}", response_class=JSONResponse)
 async def get_course_img(course_id: str, db: Session = Depends(db_dependency)):
     return await course_crud.get_course_img(course_id, db)
@@ -62,12 +72,26 @@ async def filter_courses_by_status(
     return await course_crud.filter_courses_by_status(status, db)
 
 
+@router.get("/top_courses", response_model=list[CourseDetail])
+async def top_courses(
+    db: Session = Depends(db_dependency),
+):
+    return await course_crud.get_top_three_courses(db)
+
+
 @router.get("/filter_courses_by_category", response_model=list[CourseDetail])
 async def filter_courses_by_category(
     category: str = Query(...),
     db: Session = Depends(db_dependency),
 ):
     return await course_crud.filter_courses_by_category(category, db)
+
+
+@router.get("/get_courses_by_category/{category_id}", response_model=list[CourseDetail])
+async def get_courses_by_category(
+    category_id: str, db: Session = Depends(db_dependency)
+):
+    return await course_crud.get_course_by_category_id(category_id, db)
 
 
 @router.patch("/update_course/{course_id}", response_class=JSONResponse)
