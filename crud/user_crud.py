@@ -79,6 +79,20 @@ async def get_avatar(user_id: str, db: Session):
     return base64_img
 
 
+async def get_leaderboard(db: Session):
+    db_users = (
+        db.query(User)
+        .order_by(User.level.desc())
+        .order_by(User.score.desc())
+        .filter(User.role != RoleEnum.admin)
+        .limit(3)
+        .all()
+    )
+    if db_users is None:
+        raise HTTPException(status_code=404, detail="Leaderboard not found")
+    return db_users
+
+
 # for update information of the user
 def user_update(user_id: str, user: Annotated[UserUpdate, Form()], db: Session):
     db_user = db.query(User).filter(User.id == user_id).first()

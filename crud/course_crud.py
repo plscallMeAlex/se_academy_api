@@ -71,10 +71,38 @@ async def filter_courses_by_category(category: str, db: Session):
     return courses
 
 
+async def get_course_by_category_id(category_id: str, db: Session):
+    category_name = db.query(Category).filter(Category.id == category_id).first()
+    if not category_name:
+        raise HTTPException(status_code=404, detail="Category not found")
+
+    courses = (
+        db.query(Course).filter(Course.category_list.any(category_name.name)).all()
+    )
+    return courses
+
+
 async def get_categories(db: Session):
     categories = db.query(Category).all()
     categories = [category.name for category in categories]
     return categories
+
+
+async def get_categories_detail(db: Session):
+    categories = db.query(Category).all()
+    return categories
+
+
+async def get_category_detail(category_id: str, db: Session):
+    category = db.query(Category).filter(Category.id == category_id).first()
+    if not category:
+        raise HTTPException(status_code=404, detail="Category not found")
+    return category
+
+
+async def get_top_three_courses(db: Session):
+    courses = db.query(Course).order_by(Course.enrolled.desc()).limit(3).all()
+    return courses
 
 
 # Course Section

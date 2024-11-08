@@ -30,6 +30,11 @@ async def get_avatar(user_id: str, db: Session = Depends(db_dependency)):
     return await user_crud.get_avatar(user_id, db)
 
 
+@router.get("/top/get_leaderboard", response_model=list[UserDetail])
+async def get_leaderboard(db: Session = Depends(db_dependency)):
+    return await user_crud.get_leaderboard(db)
+
+
 @router.put("/update_user/{user_id}", response_class=JSONResponse)
 async def update_user(
     user_id: str,
@@ -46,6 +51,7 @@ async def update_avatar(
     db: Session = Depends(db_dependency),
 ):
     return await user_crud.user_update_avatar(user_id, avatar, db)
+
 
 @router.delete("/delete_user/{user_id}", response_class=JSONResponse)
 async def delete_user(user_id: str, db: Session = Depends(db_dependency)):
