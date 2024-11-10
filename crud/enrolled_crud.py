@@ -219,11 +219,34 @@ async def update_enrolled_course_video(
     if not enrolled_course_video:
         raise HTTPException(status_code=404, detail="Video not found")
 
-    if enrolled_course_video.status is not None:
-        db_enrolled_course_video.status = enrolled_course_video.status
-
     if enrolled_course_video.timestamp is not None:
         db_enrolled_course_video.timestamp = enrolled_course_video.timestamp
+
+    if enrolled_course_video.status is not None:
+        # update the status of the video
+        if enrolled_course_video.status:
+            current_time = datetime.now(timezone.utc)
+
+            db_enrolled_course_video.ended_at = current_time
+            db_enrolled_course_video.status = enrolled_course_video.status
+
+            # adjust time zone
+            start_time = db_enrolled_course_video.started_at.astimezone(timezone.utc)
+            end_time = db_enrolled_course_video.ended_at.astimezone(timezone.utc)
+
+            # Calculate duration
+            duration = (end_time - start_time).total_seconds()
+
+            # add the user progress also to track the user is already finished the video
+            user_progress = User_Progress(
+                user_id=user_id,
+                enrolled_course_id=db_enrolled_course_video.enrolled_course_id,
+                enrolled_course_video_id=db_enrolled_course_video.id,
+                started_at=db_enrolled_course_video.started_at,
+                ended_at=db_enrolled_course_video.ended_at,
+                duration=duration,
+            )
+            db.add(user_progress)
 
     db.commit()
     db.refresh(db_enrolled_course_video)

@@ -56,5 +56,5 @@ class EnrolledCourseVideoDetail(BaseModel):
 
 # to update the video status or timestamp
 class EnrolledCourseVideoUpdate(BaseModel):
-    status: Optional[bool]
-    timestamp: Optional[float]
+    status: Optional[bool] = None
+    timestamp: Optional[float] = None
