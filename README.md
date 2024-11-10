@@ -35,7 +35,7 @@ After cloning this project, follow these steps:
 4. Run the API:
 
     ```bash
-         uvicorn main:app --reload
+        python main.py
     ```
 
 ## Alembic migration to creating database
