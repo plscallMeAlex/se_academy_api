@@ -73,10 +73,10 @@ class Achievement(Base):
     user_id = Column(
         UUID(as_uuid=True), ForeignKey("user.id")
     )  # link to user table via user_id
+    course_id = Column(UUID(as_uuid=True), ForeignKey("course.id"))
     title = Column(String)
     description = Column(String)
     badge = Column(String)
-    category_id = Column(UUID(as_uuid=True), ForeignKey("category.id"))
     received_at = Column(Date)
 
     user = relationship("User", back_populates="achievement")
