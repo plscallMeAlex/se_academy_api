@@ -1,3 +1,4 @@
+import os
 import mimetypes
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -14,6 +15,7 @@ from db.schemas.enrolled_sch import (
 from datetime import datetime, timezone
 
 CHUNK_SIZE = 1024 * 1024
+ESTIMATED_BITRATE = 500 * 1024
 
 # Enrolled course Section
 
@@ -158,14 +160,20 @@ async def get_enrolled_course_video_detail(
 
 
 # get the enrolled video
-async def get_enrolled_course_video(enrolled_video_id: str, db: Session):
+async def get_enrolled_course_video(user_id: str, course_video_id: str, db: Session):
     enrolled_video = (
         db.query(Enrolled_Course_Video)
-        .filter(Enrolled_Course_Video.id == enrolled_video_id)
+        .filter(Enrolled_Course_Video.user_id == user_id)
+        .filter(Enrolled_Course_Video.course_video_id == course_video_id)
         .first()
     )
     if enrolled_video is None:
         raise HTTPException(status_code=404, detail="Video not found")
+
+    # check if the video has started yet
+    if enrolled_video.started_at is None:
+        enrolled_video.started_at = datetime.now(timezone.utc)
+        db.commit()
 
     video = enrolled_video.course_video
     video_path = video.video_path
@@ -174,8 +182,15 @@ async def get_enrolled_course_video(enrolled_video_id: str, db: Session):
     if not mime_type:
         mime_type = "application/octet-stream"
 
+    start_byte = int(enrolled_video.timestamp * ESTIMATED_BITRATE)
+    file_size = os.path.getsize(video_path)
+
+    if start_byte >= file_size:
+        start_byte = 0
+
     def iterfile():
         with open(video_path, "rb") as file:
+            file.seek(start_byte)
             while True:
                 data = file.read(CHUNK_SIZE)
                 if not data:

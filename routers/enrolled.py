@@ -54,7 +54,7 @@ async def delete_enrolled_course(
 
 
 @router.get(
-    "/get_enrolled_course_video/{user_id}/{course_video_id}",
+    "/get_enrolled_course_video_detail/{user_id}/{course_video_id}",
     response_model=EnrolledCourseVideoDetail,
 )
 async def get_enrolled_course_video_detail(
@@ -66,13 +66,13 @@ async def get_enrolled_course_video_detail(
 
 
 @router.get(
-    "/get_enrolled_course_video/{enrolled_course_video_id}",
+    "/get_enrolled_course_video/{user_id}/{course_video_id}",
     response_class=StreamingResponse,
 )
 async def get_enrolled_course_video(
-    enrolled_course_video_id: str, db: Session = Depends(db_dependency)
+    user_id: str, course_video_id: str, db: Session = Depends(db_dependency)
 ):
-    return await enrolled_crud.get_enrolled_course_video(enrolled_course_video_id, db)
+    return await enrolled_crud.get_enrolled_course_video(user_id, course_video_id, db)
 
 
 @router.put("/update_enrolled_course_video/{user_id}/{course_video_id}")
