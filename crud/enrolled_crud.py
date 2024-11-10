@@ -138,19 +138,6 @@ async def delete_enrolled_course(enrolled_course_id: str, db: Session):
 # Enrolled course video Section
 
 
-# for the user when play the video first time
-# async def create_enrolled_course_video(
-#     enrolled_course_video: EnrolledCourseVideoCreate, db: Session
-# ):
-#     enrolled_course_video = enrolled_course_video.model_dump()
-
-#     db.add(enrolled_course_video)
-#     db.commit()
-#     db.refresh(enrolled_course_video)
-
-#     return JSONResponse(content={"success": True}, status_code=200)
-
-
 # get the detail of the video timestamp
 async def get_enrolled_course_video_detail(
     user_id: str, course_video_id: str, db: Session

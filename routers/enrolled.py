@@ -53,14 +53,6 @@ async def delete_enrolled_course(
     return await enrolled_crud.delete_enrolled_course(enrolled_course_id, db)
 
 
-@router.post("/create_enrolled_course_video")
-async def create_enrolled_course_video(
-    enrolled_course_video: EnrolledCourseVideoCreate,
-    db: Session = Depends(db_dependency),
-):
-    return await enrolled_crud.create_enrolled_course_video(enrolled_course_video, db)
-
-
 @router.get(
     "/get_enrolled_course_video/{user_id}/{course_video_id}",
     response_model=EnrolledCourseVideoDetail,
