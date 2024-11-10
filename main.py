@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse
 from middleware import add_middleware
@@ -33,3 +34,7 @@ def status_check():
         return JSONResponse(content={"status": True})
     except Exception as e:
         return JSONResponse(content={"status": False, "error_msg": str(e)})
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)
