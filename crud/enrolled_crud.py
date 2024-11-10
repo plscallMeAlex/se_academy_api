@@ -1,7 +1,8 @@
+import mimetypes
 from fastapi import HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.orm import Session
-from db.models.user_mdl import User
+from db.models.user_mdl import User, User_Progress
 from db.models.course_mdl import Course
 from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
 from db.schemas.enrolled_sch import (
@@ -12,6 +13,7 @@ from db.schemas.enrolled_sch import (
 )
 from datetime import datetime, timezone
 
+CHUNK_SIZE = 1024 * 1024
 
 # Enrolled course Section
 
@@ -153,6 +155,34 @@ async def get_enrolled_course_video_detail(
         raise HTTPException(status_code=404, detail="Video not found")
 
     return enrolled_course_video
+
+
+# get the enrolled video
+async def get_enrolled_course_video(enrolled_video_id: str, db: Session):
+    enrolled_video = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.id == enrolled_video_id)
+        .first()
+    )
+    if enrolled_video is None:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    video = enrolled_video.course_video
+    video_path = video.video_path
+    mime_type, _ = mimetypes.guess_type(video_path)
+
+    if not mime_type:
+        mime_type = "application/octet-stream"
+
+    def iterfile():
+        with open(video_path, "rb") as file:
+            while True:
+                data = file.read(CHUNK_SIZE)
+                if not data:
+                    break
+                yield data
+
+    return StreamingResponse(iterfile(), media_type=mime_type)
 
 
 # update the video status or timestamp

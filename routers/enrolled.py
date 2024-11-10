@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.orm import Session
 from crud import enrolled_crud
 from db.database import db_dependency
@@ -57,12 +57,22 @@ async def delete_enrolled_course(
     "/get_enrolled_course_video/{user_id}/{course_video_id}",
     response_model=EnrolledCourseVideoDetail,
 )
-async def get_enrolled_course_video(
+async def get_enrolled_course_video_detail(
     user_id: str, course_video_id, db: Session = Depends(db_dependency)
 ):
     return await enrolled_crud.get_enrolled_course_video_detail(
         user_id, course_video_id, db
     )
+
+
+@router.get(
+    "/get_enrolled_course_video/{enrolled_course_video_id}",
+    response_class=StreamingResponse,
+)
+async def get_enrolled_course_video(
+    enrolled_course_video_id: str, db: Session = Depends(db_dependency)
+):
+    return await enrolled_crud.get_enrolled_course_video(enrolled_course_video_id, db)
 
 
 @router.put("/update_enrolled_course_video/{user_id}/{course_video_id}")
