@@ -4,7 +4,7 @@ from sqlalchemy import (
     Integer,
     String,
     Float,
-    Date,
+    ARRAY,
     DateTime,
     Enum as EnumType,
 )
@@ -36,13 +36,11 @@ class User(Base):
     score = Column(MySQLInteger(unsigned=True), default=0)
     study_hours = Column(Float, default=0.0)
     status = Column(EnumType(StatusEnum), default=StatusEnum.active)
+    achievements = Column(ARRAY(UUID), default=[])
 
     # relationship between user and other tables
     progress = relationship(
         "User_Progress", back_populates="user", cascade="all, delete-orphan"
-    )
-    achievement = relationship(
-        "Achievement", back_populates="user", cascade="all, delete-orphan"
     )
     tokens = relationship("Token", back_populates="user", cascade="all, delete-orphan")
 
@@ -64,19 +62,3 @@ class User_Progress(Base):
     user = relationship("User", back_populates="progress")
     enrolled_course = relationship("Enrolled_Course")
     enrolled_course_video = relationship("Enrolled_Course_Video")
-
-
-class Achievement(Base):
-    __tablename__ = "achievement"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
-    user_id = Column(
-        UUID(as_uuid=True), ForeignKey("user.id")
-    )  # link to user table via user_id
-    course_id = Column(UUID(as_uuid=True), ForeignKey("course.id"))
-    title = Column(String)
-    description = Column(String)
-    badge = Column(String)
-    received_at = Column(Date)
-
-    user = relationship("User", back_populates="achievement")
