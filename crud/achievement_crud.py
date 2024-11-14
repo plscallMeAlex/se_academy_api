@@ -87,6 +87,8 @@ async def achievement_update(
         db_achievement.title = achievement.title
     if achievement.description:
         db_achievement.description = achievement.description
+    if achievement.course_id:
+        db_achievement.course_id = achievement.course_id
 
     db.commit()
     db.refresh(db_achievement)

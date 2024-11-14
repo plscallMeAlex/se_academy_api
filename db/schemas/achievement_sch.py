@@ -1,6 +1,7 @@
 from fastapi import Form, UploadFile, File
 from pydantic import BaseModel
 from typing import Optional
+from uuid import UUID
 
 """SCHEMAS FOR ACHIEVEMENT"""
 # Achievement Schemas
@@ -11,12 +12,14 @@ class AchievementCreate(BaseModel):
     title: str = Form(...)
     description: str = Form(...)
     badge: Optional[UploadFile] = File(None)
+    course_id: Optional[UUID] = Form(None)
 
 
 class AchievementUpdate(BaseModel):
     title: Optional[str] = Form(None)
     description: Optional[str] = Form(None)
     badge: Optional[UploadFile] = File(None)
+    course_id: Optional[UUID] = Form(None)
 
 
 class AchievementResponse(BaseModel):

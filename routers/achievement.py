@@ -8,6 +8,7 @@ from db.schemas.achievement_sch import (
     AchievementUpdate,
     AchievementResponse,
 )
+from uuid import UUID
 from crud import achievement_crud
 
 router = APIRouter()
@@ -18,10 +19,11 @@ async def create_achievement(
     title: str = Form(...),
     description: str = Form(...),
     badge: UploadFile = File(None),
+    course_id: Optional[UUID] = Form(None),
     db: Session = Depends(db_dependency),
 ):
     achievement_data = AchievementCreate(
-        title=title, description=description, badge=badge
+        title=title, description=description, badge=badge, course_id=course_id
     )
     return await achievement_crud.achievement_create(achievement_data, db)
 
@@ -32,10 +34,11 @@ async def update_achievement(
     title: str = Form(None),
     description: str = Form(None),
     badge: UploadFile = File(None),
+    course_id: Optional[UUID] = Form(None),
     db: Session = Depends(db_dependency),
 ):
     achievement_data = AchievementUpdate(
-        title=title, description=description, badge=badge
+        title=title, description=description, badge=badge, course_id=course_id
     )
     return await achievement_crud.achievement_update(
         achievement_id, achievement_data, db
