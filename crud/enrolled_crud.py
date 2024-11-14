@@ -98,24 +98,29 @@ async def check_enrolled_course(user_id: str, course_id: str, db: Session):
 async def update_enrolled_course(
     enrolled_course_id: str, update_enrolled_course: EnrolledCourseUpdate, db: Session
 ):
-    if update_enrolled_course.ended_at is None:
+    # Check if it None data
+    if update_enrolled_course.ended is None:
         return JSONResponse(
             content={"success": True, "detail": "course is nothing updated"},
             status_code=200,
         )
 
-    if (
+    db_enrolled_course = (
         db.query(Enrolled_Course)
         .filter(Enrolled_Course.id == enrolled_course_id)
         .first()
-        is None
-    ):
+    )
+
+    # Check if the course is not found
+    if not db_enrolled_course:
         raise HTTPException(status_code=404, detail="Course not found")
 
-    db.query(Enrolled_Course).filter(Enrolled_Course.id == enrolled_course_id).update(
-        update_enrolled_course.model_dump(), synchronize_session=False
-    )
-    db.commit()
+    # Check the boolean value of the ended
+    if update_enrolled_course.ended:
+        current_time = datetime.now(timezone.utc)
+        db_enrolled_course.ended_at = current_time
+        db.commit()
+        db.refresh(db_enrolled_course)
 
     return JSONResponse(content={"success": True}, status_code=200)
 

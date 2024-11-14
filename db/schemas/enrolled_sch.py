@@ -27,7 +27,7 @@ class EnrolledCourseDetail(BaseModel):
 
 # to update the course ended
 class EnrolledCourseUpdate(BaseModel):
-    ended_at: Optional[datetime]
+    ended: Optional[bool] = None
 
 
 """SCHEMAS FOR ENROLLED COURSE VIDEO"""
