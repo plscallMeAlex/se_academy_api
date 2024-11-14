@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 from db.models.user_mdl import User, User_Progress
 from db.models.course_mdl import Course
 from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
+from db.models.achievement_mdl import Achievement
 from db.schemas.enrolled_sch import (
     EnrolledCourseCreate,
     EnrolledCourseUpdate,
-    EnrolledCourseVideoCreate,
     EnrolledCourseVideoUpdate,
 )
 from datetime import datetime, timezone
@@ -117,10 +117,27 @@ async def update_enrolled_course(
 
     # Check the boolean value of the ended
     if update_enrolled_course.ended:
+        # ended the course at the current time
         current_time = datetime.now(timezone.utc)
         db_enrolled_course.ended_at = current_time
         db.commit()
         db.refresh(db_enrolled_course)
+
+        achievement = (
+            db.query(Achievement)
+            .filter(Achievement.course_id == db_enrolled_course.course_id)
+            .first()
+        )
+        # If the course has an achievement, then add the achievement to the user
+        if achievement:
+            user = db.query(User).filter(User.id == db_enrolled_course.user_id).first()
+            user.achievements.append(achievement.id)
+
+            user.score += 100
+            user.level += 1
+
+            db.commit()
+            db.refresh(user)
 
     return JSONResponse(content={"success": True}, status_code=200)
 
