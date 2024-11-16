@@ -50,7 +50,7 @@ class QuizUpdate(QuizBase):
     correct_answer: Optional[int] = None
 
 
-# QuizDetail schema for getting details of the quiz
+# QuizDetail schema for getting all details of the quiz
 class QuizDetail(QuizBase):
     id: UUID
     course_id: UUID
@@ -79,11 +79,13 @@ class QuizSubmissionCreate(BaseModel):
     scores: int
 
 
-# QuizSubmissionDetail schema for getting details of the quiz submission
+# QuizSubmissionDetail schema for getting all details of the quiz submission
 class QuizSubmissionDetail(BaseModel):
     id: UUID
     user_id: UUID
     course_id: UUID
+    quiz_answers: dict[str, int]
+    scores: int
     submitted_at: datetime
 
     class Config:
