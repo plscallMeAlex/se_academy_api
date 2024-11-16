@@ -80,9 +80,16 @@ async def quiz_delete(quiz_id: str, db: Session):
 async def quiz_submission_create(quiz_submission: QuizSubmissionCreate, db: Session):
     # Trying to calculate the scores
     scores = 0
-    quiz = db.query(Quiz).filter(Quiz.course_id == quiz_submission.course_id).all()
-    for key, value in quiz_submission.quiz_answers.items():
-        if quiz[key].correct_answer == value:
+    quiz_list = db.query(Quiz).filter(Quiz.course_id == quiz_submission.course_id).all()
+
+    # Create a mapping of quiz_id to Quiz object for easy lookup
+    quiz_map = {}
+    for item in quiz_list:
+        quiz_map[str(item.id)] = item.correct_answer
+
+    # Iterate over the submitted answers
+    for k, v in quiz_submission.quiz_answers.items():
+        if quiz_map.get(k) == v:
             scores += 1
 
     quiz_submission = Course_Quiz_Submission(
@@ -91,6 +98,10 @@ async def quiz_submission_create(quiz_submission: QuizSubmissionCreate, db: Sess
         quiz_answers=quiz_submission.quiz_answers,
         scores=scores,
     )
+
+    db.add(quiz_submission)
+    db.commit()
+    db.refresh(quiz_submission)
 
     return JSONResponse(
         content={"success": True, "quiz_submission_id": f"{quiz_submission.id}"},

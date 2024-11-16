@@ -23,7 +23,6 @@ async def create_quiz(
     quiz: QuizCreate,
     db=Depends(db_dependency),
 ):
-    quiz = quiz.model_dump()
     return await quiz_crud.quiz_create(quiz, db)
 
 
