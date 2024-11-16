@@ -72,7 +72,7 @@ class QuizResponse(BaseModel):
 
 
 # QuizSubmission schema for quiz submission
-class QuizSubmission(BaseModel):
+class QuizSubmissionCreate(BaseModel):
     user_id: UUID
     course_id: UUID
     quiz_answers: dict[str, int]
@@ -80,7 +80,7 @@ class QuizSubmission(BaseModel):
 
 
 # QuizSubmissionDetail schema for getting details of the quiz submission
-class QuizSubmissionDetail(QuizSubmission):
+class QuizSubmissionDetail(BaseModel):
     id: UUID
     user_id: UUID
     course_id: UUID
