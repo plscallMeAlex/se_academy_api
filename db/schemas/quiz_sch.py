@@ -76,7 +76,6 @@ class QuizSubmissionCreate(BaseModel):
     user_id: UUID
     course_id: UUID
     quiz_answers: dict[str, int]
-    scores: int
 
 
 # QuizSubmissionDetail schema for getting all details of the quiz submission
