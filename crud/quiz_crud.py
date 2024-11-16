@@ -98,19 +98,6 @@ async def quiz_submission_create(quiz_submission: QuizSubmissionCreate, db: Sess
     )
 
 
-# Get the quiz submission detail via quiz user and course id will return the quiz submission response
-async def quiz_submission_get(user_id: str, course_id: str, db: Session):
-    quiz_submission = (
-        db.query(Course_Quiz_Submission)
-        .filter(Course_Quiz_Submission.user_id == user_id)
-        .filter(Course_Quiz_Submission.course_id == course_id)
-        .first()
-    )
-    if quiz_submission is None:
-        raise HTTPException(status_code=404, detail="Quiz submission not found")
-    return quiz_submission
-
-
 # get all of the quiz submission from the specific user id and will reponse as list of the quiz submission response
 async def quiz_submission_get_all(user_id: str, db: Session):
     quiz_submission = (
@@ -121,6 +108,19 @@ async def quiz_submission_get_all(user_id: str, db: Session):
     if quiz_submission is None:
         raise HTTPException(status_code=404, detail="Quiz submission not found")
 
+    return quiz_submission
+
+
+# Get the quiz submission detail via quiz user and course id will return the quiz submission response
+async def quiz_submission_get(user_id: str, course_id: str, db: Session):
+    quiz_submission = (
+        db.query(Course_Quiz_Submission)
+        .filter(Course_Quiz_Submission.user_id == user_id)
+        .filter(Course_Quiz_Submission.course_id == course_id)
+        .first()
+    )
+    if quiz_submission is None:
+        raise HTTPException(status_code=404, detail="Quiz submission not found")
     return quiz_submission
 
 
