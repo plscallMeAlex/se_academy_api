@@ -8,6 +8,7 @@ from db.models import (
     enrolled_mdl,
     course_mdl,
     achievement_mdl,
+    quiz_mdl,
 )
 
 # setting the metadata to getting exported to the alembic/env.py file
