@@ -50,6 +50,11 @@ async def get_achievement(achievement_id: str, db: Session = Depends(db_dependen
     return await achievement_crud.achievement_get(achievement_id, db)
 
 
+@router.get("/get_achievements/{course_id}", response_model=list[AchievementResponse])
+async def get_achievements(course_id: str, db: Session = Depends(db_dependency)):
+    return await achievement_crud.achievement_get_by_course(course_id, db)
+
+
 @router.get("/get_achievement_badge/{achievement_id}", response_class=FileResponse)
 async def get_achievement_badge(
     achievement_id: str, db: Session = Depends(db_dependency)

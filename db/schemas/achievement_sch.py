@@ -23,6 +23,7 @@ class AchievementUpdate(BaseModel):
 
 
 class AchievementResponse(BaseModel):
+    id: UUID
     title: str
     description: str
 
