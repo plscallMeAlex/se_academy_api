@@ -35,6 +35,7 @@ class UserLogin(BaseModel):
 # response that will shown when u want the detail of the user
 class UserDetail(BaseModel):
     id: UUID
+    username: str
     firstname: str
     lastname: str
     email: EmailStr
@@ -46,6 +47,9 @@ class UserDetail(BaseModel):
     status: str
     role: str
 
+    class Config:
+        from_attributes = True
+
 
 # simple response if it work u can use it if not u can adjust it
 # updating the data for the user
@@ -54,9 +58,6 @@ class UserUpdate(BaseModel):
     lastname: Optional[str] = Form(None)
     email: Optional[EmailStr] = Form(None)
     year: Optional[int] = Form(None)
-
-    class Config:
-        from_attributes = True
 
 
 class UserDelete(BaseModel):

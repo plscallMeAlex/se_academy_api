@@ -66,6 +66,14 @@ async def get_user(user_id: str, db: Session):
     return db_user
 
 
+# get all users
+async def get_users(db: Session):
+    db_users = db.query(User).all()
+    if db_users is None:
+        raise HTTPException(status_code=404, detail="Users not found")
+    return db_users
+
+
 # get user avatar
 async def get_avatar(user_id: str, db: Session):
     db_user = db.query(User).filter(User.id == user_id).first()
@@ -79,6 +87,7 @@ async def get_avatar(user_id: str, db: Session):
     return base64_img
 
 
+# get the top 3 users to display on the leaderboard
 async def get_leaderboard(db: Session):
     db_users = (
         db.query(User)

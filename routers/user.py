@@ -20,6 +20,11 @@ async def register(user_create: UserCreate, db: Session = Depends(db_dependency)
     return user_crud.user_register(user_create, db)
 
 
+@router.get("/get_all", response_model=list[UserDetail])
+async def get_all_user(db: Session = Depends(db_dependency)):
+    return await user_crud.get_users(db)
+
+
 @router.get("/{user_id}", response_model=UserDetail)
 async def get_user(user_id: str, db: Session = Depends(db_dependency)):
     return await user_crud.get_user(user_id, db)
