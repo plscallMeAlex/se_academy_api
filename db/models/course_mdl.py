@@ -12,6 +12,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from uuid import uuid4
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 from db.models.enum_type import StatusEnum
 from db.models.category_mdl import Category
 from db.database import Base
@@ -28,7 +29,7 @@ class Course(Base):
     category_list = Column(ARRAY(String), default=[])
     year = Column(Integer, default=1)
     lecturer = Column(String, default="John Doe")
-    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    created_at = Column(DateTime, default=datetime.now(ZoneInfo("Asia/Bangkok")))
     status = Column(EnumType(StatusEnum), default=StatusEnum.active)
     total_video = Column(Integer, default=0)
     total_duration = Column(Float, default=0.0)

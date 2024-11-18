@@ -13,6 +13,7 @@ from db.schemas.enrolled_sch import (
     EnrolledCourseVideoUpdate,
 )
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 CHUNK_SIZE = 1024 * 1024
 ESTIMATED_BITRATE = 500 * 1024
@@ -118,7 +119,7 @@ async def update_enrolled_course(
     # Check the boolean value of the ended
     if update_enrolled_course.ended:
         # ended the course at the current time
-        current_time = datetime.now(timezone.utc)
+        current_time = datetime.now(ZoneInfo("Asia/Bangkok"))
         db_enrolled_course.ended_at = current_time
         db.commit()
         db.refresh(db_enrolled_course)
@@ -194,7 +195,7 @@ async def get_enrolled_course_video(user_id: str, course_video_id: str, db: Sess
 
     # check if the video has started yet
     if enrolled_video.started_at is None:
-        enrolled_video.started_at = datetime.now(timezone.utc)
+        enrolled_video.started_at = datetime.now(ZoneInfo("Asia/Bangkok"))
         db.commit()
 
     video = enrolled_video.course_video
@@ -247,14 +248,25 @@ async def update_enrolled_course_video(
     if enrolled_course_video.status is not None:
         # update the status of the video
         if enrolled_course_video.status:
-            current_time = datetime.now(timezone.utc)
+            current_time = datetime.now(ZoneInfo("Asia/Bangkok"))
 
-            db_enrolled_course_video.ended_at = current_time
             db_enrolled_course_video.status = enrolled_course_video.status
 
+            # Check whether the video has started or not
+            if db_enrolled_course_video.started_at is None:
+                raise HTTPException(status_code=400, detail="Video has not started yet")
+
+            # Handle the ended time of the video
+            if db_enrolled_course_video.ended_at is None:
+                db_enrolled_course_video.ended_at = current_time
+
             # adjust time zone
-            start_time = db_enrolled_course_video.started_at.astimezone(timezone.utc)
-            end_time = db_enrolled_course_video.ended_at.astimezone(timezone.utc)
+            start_time = db_enrolled_course_video.started_at.astimezone(
+                ZoneInfo("Asia/Bangkok")
+            )
+            end_time = db_enrolled_course_video.ended_at.astimezone(
+                ZoneInfo("Asia/Bangkok")
+            )
 
             # Calculate duration
             duration = (end_time - start_time).total_seconds()
