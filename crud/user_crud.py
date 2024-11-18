@@ -7,8 +7,11 @@ from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
 from db.models.course_mdl import Course, Course_Video
 from db.models.enum_type import RoleEnum, StatusEnum
 from db.schemas.user_sch import UserLogin, UserCreate, UserUpdate
+from settings import get_settings
 from security import create_access_token, verify_password, hash_password
 import base64
+
+SETTINGS = get_settings()
 
 
 # login user and assign the token to the user
@@ -65,7 +68,7 @@ async def get_user(user_id: str, db: Session):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    db_user.avatar = f"/user/avatar/{user_id}"
+    db_user.avatar = f"{SETTINGS.BACKEND_URL}/user/avatar/{user_id}"
     return db_user
 
 
@@ -76,7 +79,7 @@ async def get_users(db: Session):
         raise HTTPException(status_code=404, detail="Users not found")
     # assign the avatar api for each user
     for user in db_users:
-        user.avatar = f"/user/avatar/{user.id}"
+        user.avatar = f"{SETTINGS.BACKEND_URL}/user/avatar/{user.id}"
     return db_users
 
 

@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings
 class Setting(BaseSettings):
     # Frontend URL
     FRONTEND_URL: str
+    BACKEND_URL: str
 
     # Database
     DB_URL: str
