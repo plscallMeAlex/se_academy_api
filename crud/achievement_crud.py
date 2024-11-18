@@ -112,6 +112,15 @@ async def achievement_get(achievement_id: str, db: Session):
     return db_achievement
 
 
+async def achievement_get_by_course(course_id: str, db: Session):
+    db_achievement = (
+        db.query(Achievement).filter(Achievement.course_id == course_id).all()
+    )
+    if db_achievement is None:
+        raise HTTPException(status_code=404, detail="Achievement not found")
+    return db_achievement
+
+
 # Response the badge image as file response
 async def achievement_badge_get(achievement_id: str, db: Session):
     db_achievement = (
