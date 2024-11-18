@@ -35,6 +35,11 @@ async def update_quiz(
     return await quiz_crud.quiz_update(quiz_id, quiz, db)
 
 
+@router.get("/get_all", response_model=list[QuizResponse])
+async def get_quiz_every(db: Session = Depends(db_dependency)):
+    return await quiz_crud.quiz_get_every(db)
+
+
 @router.get("/get_quiz_all/{course_id}", response_model=list[QuizResponse])
 async def get_quiz_all(course_id: str, db: Session = Depends(db_dependency)):
     return await quiz_crud.quiz_get_all(course_id, db)

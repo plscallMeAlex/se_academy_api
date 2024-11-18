@@ -40,6 +40,12 @@ async def quiz_update(quiz_id: str, quiz: QuizUpdate, db: Session):
     )
 
 
+# Get all of the quiz
+async def quiz_get_every(db: Session):
+    quiz = db.query(Quiz).all()
+    return quiz
+
+
 # Get all the quiz from the specific course
 async def quiz_get_all(course_id: str, db: Session):
     if db.query(Quiz).filter(Quiz.course_id == course_id).first() is None:
