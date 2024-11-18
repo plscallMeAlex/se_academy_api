@@ -63,6 +63,7 @@ async def get_user(user_id: str, db: Session):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    db_user.avatar = f"/user/avatar/{user_id}"
     return db_user
 
 
@@ -71,6 +72,9 @@ async def get_users(db: Session):
     db_users = db.query(User).all()
     if db_users is None:
         raise HTTPException(status_code=404, detail="Users not found")
+    # assign the avatar api for each user
+    for user in db_users:
+        user.avatar = f"/user/avatar/{user.id}"
     return db_users
 
 

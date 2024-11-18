@@ -40,7 +40,7 @@ class UserDetail(BaseModel):
     lastname: str
     email: EmailStr
     year: int
-    avatar: Optional[str]
+    avatar: str  # return the api for fetching the avatar image
     level: int
     score: int
     study_hours: int
