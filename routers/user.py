@@ -40,6 +40,11 @@ async def get_leaderboard(db: Session = Depends(db_dependency)):
     return await user_crud.get_leaderboard(db)
 
 
+@router.get("/progress/{user_id}")
+async def get_progress(user_id: str, db: Session = Depends(db_dependency)):
+    return await user_crud.get_user_progress(user_id, db)
+
+
 @router.put("/update_user/{user_id}", response_class=JSONResponse)
 async def update_user(
     user_id: str,
