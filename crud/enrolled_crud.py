@@ -294,9 +294,24 @@ async def update_enrolled_course_video(
             )
             db.add(user_progress)
 
+            # update the user study hours
+            await update_user_study_hours(user_id, duration, db)
+
     db.commit()
     db.refresh(db_enrolled_course_video)
     return JSONResponse(
         content={"success": True, "detail": "Update the video detail success"},
         status_code=200,
     )
+
+
+# duration will be unit of second
+async def update_user_study_hours(user_id: str, duration: int, db: Session):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        return
+    # Convert the duration to hours
+    user.study_hours += duration / 3600
+    db.commit()
+    db.refresh(user)
+    return
