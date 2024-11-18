@@ -45,6 +45,11 @@ async def update_achievement(
     )
 
 
+@router.get("/get_all", response_model=list[AchievementResponse])
+async def get_all_achievements(db: Session = Depends(db_dependency)):
+    return await achievement_crud.achievement_get_all(db)
+
+
 @router.get("/get_achievement/{achievement_id}", response_model=AchievementResponse)
 async def get_achievement(achievement_id: str, db: Session = Depends(db_dependency)):
     return await achievement_crud.achievement_get(achievement_id, db)

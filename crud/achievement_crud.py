@@ -102,6 +102,12 @@ async def achievement_update(
     )
 
 
+# Get all the achievement
+async def achievement_get_all(db: Session):
+    db_achievement = db.query(Achievement).all()
+    return db_achievement
+
+
 # Response when trying to get the achievement detail
 async def achievement_get(achievement_id: str, db: Session):
     db_achievement = (
