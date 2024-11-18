@@ -18,11 +18,20 @@ class EnrolledCourseDetail(BaseModel):
     id: UUID
     user_id: UUID
     course_id: UUID
-    enrolled_at: Optional[datetime]
+    enrolled_at: datetime
     ended_at: Optional[datetime]
 
     class Config:
         from_attributes = True
+
+
+# Model when trying to get the enrollment detail
+class EnrollmentDetail(BaseModel):
+    id: UUID
+    username: str
+    course_id: str  # Subject id that user can interact with
+    course_title: str
+    enrolled_at: datetime
 
 
 # to update the course ended

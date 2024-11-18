@@ -6,8 +6,8 @@ from db.database import db_dependency
 from db.schemas.enrolled_sch import (
     EnrolledCourseCreate,
     EnrolledCourseDetail,
+    EnrollmentDetail,
     EnrolledCourseUpdate,
-    EnrolledCourseVideoCreate,
     EnrolledCourseVideoDetail,
     EnrolledCourseVideoUpdate,
 )
@@ -21,6 +21,11 @@ async def create_enrolled_course(
     enrolled_course: EnrolledCourseCreate, db: Session = Depends(db_dependency)
 ):
     return await enrolled_crud.create_enrolled_course(enrolled_course, db)
+
+
+@router.get("/get_all", response_model=list[EnrollmentDetail])
+async def get_all_enrolled_course(db: Session = Depends(db_dependency)):
+    return await enrolled_crud.get_all_enrolled_course(db)
 
 
 @router.get("/get_enrolled_course/{user_id}", response_model=list[EnrolledCourseDetail])

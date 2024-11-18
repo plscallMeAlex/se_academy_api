@@ -2,7 +2,7 @@ import os
 import mimetypes
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from db.models.user_mdl import User, User_Progress
 from db.models.course_mdl import Course
 from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
@@ -10,9 +10,10 @@ from db.models.achievement_mdl import Achievement
 from db.schemas.enrolled_sch import (
     EnrolledCourseCreate,
     EnrolledCourseUpdate,
+    EnrollmentDetail,
     EnrolledCourseVideoUpdate,
 )
-from datetime import datetime, timezone
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 CHUNK_SIZE = 1024 * 1024
@@ -51,6 +52,37 @@ async def create_enrolled_course(enrolled_course: EnrolledCourseCreate, db: Sess
         db.commit()
 
     return JSONResponse(content={"success": True}, status_code=200)
+
+
+# get all the enrollment
+async def get_all_enrolled_course(db: Session):
+    print("get_all_enrolled_course")
+    enrolled_course = (
+        db.query(Enrolled_Course)
+        .options(joinedload(Enrolled_Course.course))
+        .order_by(Enrolled_Course.enrolled_at.desc())
+        .limit(12)
+        .all()
+    )
+
+    # Sort the enrolled course by the enrolled time recently
+    # enrolled_course = sorted(enrolled_course, key=lambda x: x.enrolled_at, reverse=True)
+
+    result = [
+        EnrollmentDetail(
+            id=enrolled.id,
+            username=db.query(User)
+            .filter(User.id == enrolled.user_id)
+            .first()
+            .username,
+            course_id=enrolled.course.subjectid,
+            course_title=enrolled.course.title,
+            enrolled_at=enrolled.enrolled_at,
+        )
+        for enrolled in enrolled_course
+    ]
+
+    return result
 
 
 # get the detail of the enrolled course
