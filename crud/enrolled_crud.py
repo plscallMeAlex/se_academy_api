@@ -237,8 +237,6 @@ async def update_enrolled_course_video(
         .first()
     )
 
-    print("enrolled_course_video", enrolled_course_video.timestamp)
-
     if not enrolled_course_video:
         raise HTTPException(status_code=404, detail="Video not found")
 
@@ -248,6 +246,20 @@ async def update_enrolled_course_video(
     if enrolled_course_video.status is not None:
         # update the status of the video
         if enrolled_course_video.status:
+            # Check if the User progress is already have this enrolled video
+            user_progress = (
+                db.query(User_Progress)
+                .filter(
+                    User_Progress.enrolled_course_video_id
+                    == db_enrolled_course_video.id
+                )
+                .first()
+            )
+            if user_progress:
+                raise HTTPException(
+                    status_code=400, detail="User already finished this video"
+                )
+
             current_time = datetime.now(ZoneInfo("Asia/Bangkok"))
 
             db_enrolled_course_video.status = enrolled_course_video.status
