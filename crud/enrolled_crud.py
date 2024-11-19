@@ -146,14 +146,47 @@ async def check_enrolled_course(user_id: str, course_id: str, db: Session):
         .first()
     )
 
-    if not enrolled_course:
+    if enrolled_course is None:
         return JSONResponse(
             content={"success": False, "detail": "User not enrolled the course"},
             status_code=200,
         )
 
     return JSONResponse(
-        content={"success": True, "detail": "User already enrolled the course"},
+        content={
+            "success": True,
+            "enrolled_course_id": str(enrolled_course.id),
+            "detail": "User already enrolled the course",
+        },
+        status_code=200,
+    )
+
+
+async def check_enrolled_course_ended(enrolled_course_id: str, db: Session):
+    # query the enrolled course video to check if the course is already ended
+    enrolled_course_videos = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.enrolled_course_id == enrolled_course_id)
+        .all()
+    )
+
+    # Check if the course is already ended
+    if all(video.status for video in enrolled_course_videos):
+        return JSONResponse(
+            content={
+                "success": True,
+                "detail": "Course is already ended",
+                "ended": True,
+            },
+            status_code=200,
+        )
+
+    return JSONResponse(
+        content={
+            "success": True,
+            "detail": "Course is not ended yet",
+            "ended": False,
+        },
         status_code=200,
     )
 
