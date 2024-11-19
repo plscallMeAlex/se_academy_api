@@ -28,6 +28,11 @@ async def get_all_enrolled_course(db: Session = Depends(db_dependency)):
     return await enrolled_crud.get_all_enrolled_course(db)
 
 
+@router.get("/get_enrollment_summary")
+async def get_enrollment_summary(db: Session = Depends(db_dependency)):
+    return await enrolled_crud.get_enrollment_summary(db)
+
+
 @router.get("/get_enrolled_course/{user_id}", response_model=list[EnrolledCourseDetail])
 async def get_enrolled_course(user_id: str, db: Session = Depends(db_dependency)):
     return await enrolled_crud.get_enrolled_course(user_id, db)

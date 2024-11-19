@@ -13,6 +13,7 @@ from db.schemas.enrolled_sch import (
     EnrollmentDetail,
     EnrolledCourseVideoUpdate,
 )
+from collections import Counter
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -83,6 +84,19 @@ async def get_all_enrolled_course(db: Session):
     ]
 
     return result
+
+
+async def get_enrollment_summary(db: Session):
+    enrolled_courses = (
+        db.query(Enrolled_Course)
+        .options(joinedload(Enrolled_Course.course))
+        .order_by(Enrolled_Course.enrolled_at)
+        .all()
+    )
+
+    month_counts = Counter(enrolled.enrolled_at.month for enrolled in enrolled_courses)
+    month_summary = [month_counts.get(month, 0) for month in range(1, 13)]
+    return month_summary
 
 
 # get the detail of the enrolled course
