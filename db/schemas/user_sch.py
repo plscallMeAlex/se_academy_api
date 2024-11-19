@@ -43,7 +43,7 @@ class UserDetail(BaseModel):
     avatar: str  # return the api for fetching the avatar image
     level: int
     score: int
-    study_hours: int
+    study_hours: float
     status: str
     role: str
 
