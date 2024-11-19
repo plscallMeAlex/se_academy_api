@@ -79,7 +79,7 @@ async def get_users(db: Session):
         raise HTTPException(status_code=404, detail="Users not found")
     # assign the avatar api for each user
     for user in db_users:
-        user.avatar = f"{SETTINGS.BACKEND_URL}/user/avatar/{user.id}"
+        user.avatar = f"{SETTINGS.BACKEND_URL}user/avatar/{user.id}"
     return db_users
 
 
