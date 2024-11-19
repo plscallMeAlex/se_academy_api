@@ -64,6 +64,7 @@ class QuizDetail(QuizBase):
 
 # QuizResponse schema for response
 class QuizResponse(BaseModel):
+    id: UUID
     question: str
     choices: list[str]
 
@@ -95,6 +96,7 @@ class QuizSubmissionDetail(BaseModel):
 class QuizSubmissionResponse(BaseModel):
     quiz_answers: dict[str, int]
     scores: int
+    submitted_at: datetime
 
     class Config:
         from_attributes = True
