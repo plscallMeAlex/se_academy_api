@@ -134,7 +134,7 @@ async def quiz_submission_get(user_id: str, course_id: str, db: Session):
         db.query(Course_Quiz_Submission)
         .filter(Course_Quiz_Submission.user_id == user_id)
         .filter(Course_Quiz_Submission.course_id == course_id)
-        .first()
+        .all()
     )
     if quiz_submission is None:
         raise HTTPException(status_code=404, detail="Quiz submission not found")

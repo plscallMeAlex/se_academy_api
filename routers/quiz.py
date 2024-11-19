@@ -82,7 +82,7 @@ async def get_quiz_submission_all(user_id: str, db=Depends(db_dependency)):
 # Get the submission response via user_id and course_id
 @router.get(
     "/get_quiz_submission_course/{user_id}/{course_id}",
-    response_model=QuizSubmissionResponse,
+    response_model=list[QuizSubmissionResponse],
 )
 async def get_quiz_submission_course(
     user_id: str, course_id: str, db=Depends(db_dependency)
