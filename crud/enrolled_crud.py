@@ -147,14 +147,18 @@ async def check_enrolled_course(user_id: str, course_id: str, db: Session):
         .first()
     )
 
-    if not enrolled_course:
+    if enrolled_course is None:
         return JSONResponse(
             content={"success": False, "detail": "User not enrolled the course"},
             status_code=200,
         )
 
     return JSONResponse(
-        content={"success": True, "detail": "User already enrolled the course"},
+        content={
+            "success": True,
+            "enrolled_course_id": str(enrolled_course.id),
+            "detail": "User already enrolled the course",
+        },
         status_code=200,
     )
 
