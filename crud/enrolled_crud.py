@@ -18,7 +18,6 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 CHUNK_SIZE = 1024 * 1024
-ESTIMATED_BITRATE = 500 * 1024
 
 # Enrolled course Section
 
@@ -298,15 +297,8 @@ async def get_enrolled_course_video(user_id: str, course_video_id: str, db: Sess
     if not mime_type:
         mime_type = "application/octet-stream"
 
-    start_byte = int(enrolled_video.timestamp * ESTIMATED_BITRATE)
-    file_size = os.path.getsize(video_path)
-
-    if start_byte >= file_size:
-        start_byte = 0
-
     def iterfile():
         with open(video_path, "rb") as file:
-            file.seek(start_byte)
             while True:
                 data = file.read(CHUNK_SIZE)
                 if not data:
