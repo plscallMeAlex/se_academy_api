@@ -163,6 +163,35 @@ async def check_enrolled_course(user_id: str, course_id: str, db: Session):
     )
 
 
+async def check_enrolled_course_ended(enrolled_course_id: str, db: Session):
+    # query the enrolled course video to check if the course is already ended
+    enrolled_course_videos = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.enrolled_course_id == enrolled_course_id)
+        .all()
+    )
+
+    # Check if the course is already ended
+    if all(video.status for video in enrolled_course_videos):
+        return JSONResponse(
+            content={
+                "success": True,
+                "detail": "Course is already ended",
+                "ended": True,
+            },
+            status_code=200,
+        )
+
+    return JSONResponse(
+        content={
+            "success": True,
+            "detail": "Course is not ended yet",
+            "ended": False,
+        },
+        status_code=200,
+    )
+
+
 # update the enrolled course end date
 async def update_enrolled_course(
     enrolled_course_id: str, update_enrolled_course: EnrolledCourseUpdate, db: Session

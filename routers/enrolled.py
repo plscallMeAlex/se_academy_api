@@ -50,6 +50,13 @@ async def check_enrolled_course(
     return await enrolled_crud.check_enrolled_course(user_id, course_id, db)
 
 
+@router.get("/check_enrolled_course_ended/{enrolled_course_id}")
+async def check_enrolled_course_ended(
+    enrolled_course_id: str, db: Session = Depends(db_dependency)
+):
+    return await enrolled_crud.check_enrolled_course_ended(enrolled_course_id, db)
+
+
 @router.put("/update_enrolled_course/{enrolled_course_id}")
 async def update_enrolled_course(
     enrolled_course_id: str,
