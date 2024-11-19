@@ -86,6 +86,7 @@ async def get_all_enrolled_course(db: Session):
     return result
 
 
+# get all the summary of the enrollment by month
 async def get_enrollment_summary(db: Session):
     enrolled_courses = (
         db.query(Enrolled_Course)
@@ -95,6 +96,23 @@ async def get_enrollment_summary(db: Session):
     )
 
     month_counts = Counter(enrolled.enrolled_at.month for enrolled in enrolled_courses)
+    month_summary = [month_counts.get(month, 0) for month in range(1, 13)]
+    return month_summary
+
+
+# get all enrolled course that already ended by month
+async def get_ended_enrollment_summary(db: Session):
+    ended_enrolled_courses = (
+        db.query(Enrolled_Course)
+        .filter(Enrolled_Course.ended_at.isnot(None))
+        .options(joinedload(Enrolled_Course.course))
+        .order_by(Enrolled_Course.ended_at.desc())
+        .all()
+    )
+
+    month_counts = Counter(
+        enrolled.ended_at.month for enrolled in ended_enrolled_courses
+    )
     month_summary = [month_counts.get(month, 0) for month in range(1, 13)]
     return month_summary
 
