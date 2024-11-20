@@ -14,16 +14,25 @@ from db.models.quiz_mdl import Quiz
 # This file is for creating the mock data prepared for demonstration purposes.
 session: Session = SessionLocal()
 data_list = []
+depend_list = []
 
 
-def create_mock_data(data_list: list):
+def create_mock_data(data_list: list, depend_list: list = None):
     print("Creating mock data...")
     try:
+        print("Proceed to creating main data...")
         for data in data_list:
             session.add(data)
             session.commit()
             session.refresh(data)
             print(f"Data {data} has been created.")
+        print("Proceed to creating dependent data...")
+        if depend_list:
+            for depend in depend_list:
+                session.add(depend)
+                session.commit()
+                session.refresh(depend)
+                print(f"Data {depend} has been created.")
     except Exception as e:
         print(f"Error: {e}")
         session.rollback()
@@ -286,11 +295,11 @@ achievement5 = Achievement(
     course_id=course5.id,
 )
 
-data_list.append(achievement1)
-data_list.append(achievement2)
-data_list.append(achievement3)
-data_list.append(achievement4)
-data_list.append(achievement5)
+depend_list.append(achievement1)
+depend_list.append(achievement2)
+depend_list.append(achievement3)
+depend_list.append(achievement4)
+depend_list.append(achievement5)
 
 
 # SECTION - Quiz Creating
@@ -444,21 +453,21 @@ quiz5_3 = Quiz(
     correct_answer=0,
 )
 
-data_list.append(quiz1_1)
-data_list.append(quiz1_2)
-data_list.append(quiz1_3)
-data_list.append(quiz2_1)
-data_list.append(quiz2_2)
-data_list.append(quiz2_3)
-data_list.append(quiz3_1)
-data_list.append(quiz3_2)
-data_list.append(quiz3_3)
-data_list.append(quiz4_1)
-data_list.append(quiz4_2)
-data_list.append(quiz4_3)
-data_list.append(quiz5_1)
-data_list.append(quiz5_2)
-data_list.append(quiz5_3)
+depend_list.append(quiz1_1)
+depend_list.append(quiz1_2)
+depend_list.append(quiz1_3)
+depend_list.append(quiz2_1)
+depend_list.append(quiz2_2)
+depend_list.append(quiz2_3)
+depend_list.append(quiz3_1)
+depend_list.append(quiz3_2)
+depend_list.append(quiz3_3)
+depend_list.append(quiz4_1)
+depend_list.append(quiz4_2)
+depend_list.append(quiz4_3)
+depend_list.append(quiz5_1)
+depend_list.append(quiz5_2)
+depend_list.append(quiz5_3)
 
 
 if __name__ == "__main__":
