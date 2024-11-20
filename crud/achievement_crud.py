@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse, FileResponse
 from sqlalchemy.orm import Session
 from db.models.achievement_mdl import Achievement
 from db.schemas.achievement_sch import AchievementCreate, AchievementUpdate
+import base64
 
 DEFAULT_NAME = "default_badge.png"
 BADGE_PATH = "images/badge"
@@ -135,7 +136,9 @@ async def achievement_badge_get(achievement_id: str, db: Session):
     if db_achievement is None:
         raise HTTPException(status_code=404, detail="Achievement not found")
 
-    return FileResponse(f"{BADGE_PATH}/{db_achievement.badge}")
+    with open(f"{BADGE_PATH}/{db_achievement.badge}", "rb") as img:
+        base64_img = base64.b64encode(img.read())
+    return base64_img
 
 
 # Delete the achievement
