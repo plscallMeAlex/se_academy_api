@@ -8,6 +8,7 @@ from db.models.user_mdl import User
 from db.models.token_mdl import Token
 from db.models.category_mdl import Category
 from db.models.course_mdl import Course
+from db.models.achievement_mdl import Achievement
 
 # This file is for creating the mock data prepared for demonstration purposes.
 session: Session = SessionLocal()
@@ -174,6 +175,44 @@ data_list.append(course2)
 data_list.append(course3)
 data_list.append(course4)
 data_list.append(course5)
+
+
+# SECTION - Achievement Creating
+achievement1 = Achievement(
+    title="Ur Logic is Good",
+    description="You have completed the DSA course.",
+    course_id=course1.id,
+)
+
+achievement2 = Achievement(
+    title="DEV Master",
+    description="You have completed the Web Development course.",
+    course_id=course2.id,
+)
+
+achievement3 = Achievement(
+    title="Math Genius",
+    description="You have completed the Calculus course.",
+    course_id=course3.id,
+)
+
+achievement4 = Achievement(
+    title="Embedded Systems Expert",
+    description="You have completed the Embedded Systems course.",
+    course_id=course4.id,
+)
+
+achievement5 = Achievement(
+    title="Programming Prodigy",
+    description="You have completed the Computer Programming course.",
+    course_id=course5.id,
+)
+
+data_list.append(achievement1)
+data_list.append(achievement2)
+data_list.append(achievement3)
+data_list.append(achievement4)
+data_list.append(achievement5)
 
 
 if __name__ == "__main__":
