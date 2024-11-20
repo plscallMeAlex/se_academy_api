@@ -140,7 +140,13 @@ async def get_enrolled_course_progress(enrolled_course_id: str, db: Session):
     )
 
     if not enrolled_course_videos:
-        raise HTTPException(status_code=404, detail="Course not found")
+        return JSONResponse(
+            content={
+                "success": False,
+                "detail": "No video found in the enrolled course",
+            },
+            status_code=200,
+        )
 
     count = 0
     for video in enrolled_course_videos:
@@ -150,7 +156,7 @@ async def get_enrolled_course_progress(enrolled_course_id: str, db: Session):
     return JSONResponse(
         content={
             "success": True,
-            "progress": count / len(enrolled_course_videos),
+            "progress": count,
             "total_video": len(enrolled_course_videos),
         },
         status_code=200,
