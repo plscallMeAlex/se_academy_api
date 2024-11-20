@@ -471,4 +471,4 @@ depend_list.append(quiz5_3)
 
 
 if __name__ == "__main__":
-    create_mock_data(data_list)
+    create_mock_data(data_list, depend_list)
