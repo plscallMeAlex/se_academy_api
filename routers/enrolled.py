@@ -43,6 +43,13 @@ async def get_enrolled_course(user_id: str, db: Session = Depends(db_dependency)
     return await enrolled_crud.get_enrolled_course(user_id, db)
 
 
+@router.get("/get_enrolled_course_progress/{enrolled_course_id}")
+async def get_enrolled_course_progress(
+    enrolled_course_id: str, db: Session = Depends(db_dependency)
+):
+    return await enrolled_crud.get_enrolled_course_progress(enrolled_course_id, db)
+
+
 @router.get("/check_enrolled/{user_id}/{course_id}", response_class=JSONResponse)
 async def check_enrolled_course(
     user_id: str, course_id: str, db: Session = Depends(db_dependency)

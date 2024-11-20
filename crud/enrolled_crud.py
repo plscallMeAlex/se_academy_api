@@ -131,6 +131,32 @@ async def get_enrolled_course(user_id: str, db: Session):
     return enrolled_course
 
 
+# get the progress of the user's enrolled course
+async def get_enrolled_course_progress(enrolled_course_id: str, db: Session):
+    enrolled_course_videos = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.enrolled_course_id == enrolled_course_id)
+        .all()
+    )
+
+    if not enrolled_course_videos:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    count = 0
+    for video in enrolled_course_videos:
+        if video.status:
+            count += 1
+
+    return JSONResponse(
+        content={
+            "success": True,
+            "progress": count / len(enrolled_course_videos),
+            "total_video": len(enrolled_course_videos),
+        },
+        status_code=200,
+    )
+
+
 # check if the user has enrolled the course
 async def check_enrolled_course(user_id: str, course_id: str, db: Session):
     if db.query(User).filter(User.id == user_id).first() is None:
