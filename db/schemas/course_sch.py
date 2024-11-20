@@ -1,3 +1,4 @@
+from fastapi import Form, UploadFile, File
 from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional, List
 from db.models.enum_type import StatusEnum
@@ -5,7 +6,23 @@ from uuid import UUID
 from datetime import datetime
 
 """SCHEMAS FOR COURSE VIDEO"""
+
+
 # Course Video Schemas
+class CourseVideoCreate(BaseModel):
+    chapter: int = Form(...)
+    title: str = Form(...)
+    video: UploadFile = File(...)
+    description: str = Form(...)
+
+    @field_validator("chapter")
+    def validate_chapter(cls, chapter):
+        if chapter < 0:
+            return 0
+        return chapter
+
+    class Config:
+        from_attributes = True
 
 
 # the detail that will be shown when the video is requested

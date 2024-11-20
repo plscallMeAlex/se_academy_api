@@ -7,7 +7,12 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 from db.models.category_mdl import Category
 from db.models.course_mdl import Course, Course_Video
-from db.schemas.course_sch import CourseCreate, CourseUpdate, CourseVideoUpdate
+from db.schemas.course_sch import (
+    CourseCreate,
+    CourseUpdate,
+    CourseVideoCreate,
+    CourseVideoUpdate,
+)
 from moviepy.editor import VideoFileClip
 
 
@@ -193,69 +198,60 @@ CHUNK_SIZE = 1024 * 1024
 
 
 # upload the video the course and add it to the database
-async def upload_video(course_id: str, videos: list[UploadFile], db: Session):
+async def upload_video(course_id: str, course_video: CourseVideoCreate, db: Session):
     course = db.query(Course).filter(Course.id == course_id).first()
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
 
-    if videos == []:
-        raise HTTPException(status_code=400, detail="No video uploaded")
-
+    video = course_video.video
     total_time = 0
-
-    for video in videos:
-        video_data = await video.read()
-        if video.content_type not in ["video/mp4", "video/mov", "video/webm"]:
-            raise HTTPException(
-                status_code=400,
-                detail=f"File {video.filename} type {video.content_type} is not supported for video",
-            )
-        existname = (
-            db.query(Course_Video)
-            .filter(func.lower(Course_Video.title) == video.filename.lower())
-            .first()
+    video_data = await video.read()
+    if video.content_type not in ["video/mp4", "video/mov", "video/webm"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"File {video.filename} type {video.content_type} is not supported for video",
         )
 
-        # check whether the video is already in the directory
-        video_in_dir = False
-        try:
-            with open(f"videos/{video.filename}", "r") as f:
-                video_in_dir = True
-        except FileNotFoundError:
-            video_in_dir = False
+    # Trim and clean up course title for directory naming
+    course_title_trimmed = course.title.strip()  # Remove leading and trailing spaces
+    course_dir_name = course_title_trimmed.replace(
+        " ", "_"
+    )  # Replace spaces with underscores
 
-        if existname:
-            if not video_in_dir:
-                with open(f"videos/{video.filename}", "wb") as vid:
-                    vid.write(video_data)
-            raise HTTPException(
-                status_code=400,
-                detail=f"Video {video.filename} already exists in the course",
-            )
+    # Create the course-specific directory if it doesn't exist
+    course_dir = f"videos/{course_dir_name}"
+    if not os.path.exists(course_dir):
+        os.makedirs(course_dir)
 
-        # save the video to the directory
-        saveto = f"videos/{video.filename}"
-        with open(saveto, "wb") as vid:
-            vid.write(video_data)
-        clip = VideoFileClip(saveto)
-        total_time += clip.duration
-
-        course_video = Course_Video(
-            title=video.filename,
-            video_path=saveto,
-            course_id=course.id,
-            duration=clip.duration,
+    # Check if the video already exists in the directory
+    if os.path.exists(saveto):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Video {video.filename} already exists in the course directory",
         )
-        db.add(course_video)
 
-    course.total_video += len(videos)
+    # save the video to the directory
+    saveto = f"videos/{course_dir}/{video.filename}"
+    with open(saveto, "wb") as vid:
+        vid.write(video_data)
+    clip = VideoFileClip(saveto)
+    total_time += clip.duration
+    course_video = Course_Video(
+        title=course_video.title,
+        description=course_video.description,
+        chapter=course_video.chapter,
+        video_path=saveto,
+        course_id=course.id,
+        duration=clip.duration,
+    )
+    db.add(course_video)
+
+    course.total_video += 1
     course.total_duration += total_time
     db.commit()
     db.refresh(course)
 
-    return JSONResponse(
-        content={"success": True, "videos_uploaded": len(videos)}, status_code=200
-    )
+    return JSONResponse(content={"success": True}, status_code=200)
 
 
 # get the detail of the video

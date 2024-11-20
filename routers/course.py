@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Query
+from fastapi import APIRouter, Depends, UploadFile, File, Query, Form
 from fastapi.responses import JSONResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
@@ -8,6 +8,7 @@ from db.schemas.course_sch import (
     CourseCreate,
     CourseUpdate,
     CourseDetail,
+    CourseVideoCreate,
     CourseVideoDetail,
     CourseVideoUpdate,
 )
@@ -119,10 +120,16 @@ async def delete_course(course_id: str, db: Session = Depends(db_dependency)):
 @router.post("/upload_video/{course_id}", response_class=JSONResponse)
 async def upload_video(
     course_id: str,
-    videos: list[UploadFile] = File(None),
+    title: str = Form(...),
+    description: str = Form(...),
+    chapter: int = Form(...),
+    video: UploadFile = File(...),
     db: Session = Depends(db_dependency),
 ):
-    return await course_crud.upload_video(course_id, videos, db)
+    course_video_data = CourseVideoCreate(
+        title=title, description=description, chapter=chapter, video=video
+    )
+    return await course_crud.upload_video(course_id, course_video_data, db)
 
 
 @router.get("/get_video_detail/{video_id}", response_model=CourseVideoDetail)
