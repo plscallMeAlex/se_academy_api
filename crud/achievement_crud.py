@@ -116,6 +116,11 @@ async def achievement_get(achievement_id: str, db: Session):
     )
     if db_achievement is None:
         raise HTTPException(status_code=404, detail="Achievement not found")
+
+    with open(f"{BADGE_PATH}/{db_achievement.badge}", "rb") as img:
+        base64_img = base64.b64encode(img.read())
+    db_achievement.badge = base64_img
+
     return db_achievement
 
 

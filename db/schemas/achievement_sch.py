@@ -26,6 +26,7 @@ class AchievementResponse(BaseModel):
     id: UUID
     title: str
     description: str
+    badge: str  # return the api for fetching the badge image
 
     class Config:
         from_attributes = True
