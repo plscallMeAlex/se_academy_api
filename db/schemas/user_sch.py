@@ -46,7 +46,7 @@ class UserDetail(BaseModel):
     study_hours: float
     status: str
     role: str
-    achievements: list[UUID]
+    achievements: Optional[list[UUID]]
 
     class Config:
         from_attributes = True
