@@ -228,7 +228,21 @@ async def update_enrolled_course(
         # If the course has an achievement, then add the achievement to the user
         if achievement:
             user = db.query(User).filter(User.id == db_enrolled_course.user_id).first()
-            user.achievements.append(achievement.id)
+
+            if achievement.id in user.achievements:
+                return JSONResponse(
+                    content={
+                        "success": True,
+                        "detail": "Course is already ended and achievement already added",
+                    },
+                    status_code=200,
+                )
+
+            user.achievements = (
+                user.achievements + [achievement.id]
+                if user.achievements
+                else [achievement.id]
+            )
 
             user.score += 100
             user.level += 1
