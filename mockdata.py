@@ -96,12 +96,89 @@ user_student5 = User(
     role="graduated",
 )
 
+user_student6 = User(
+    username="student6",
+    password=hash_password("student6"),
+    firstname="Student6",
+    lastname="Student6",
+    year=1,
+    email="student6@student6.com",
+    role="freshman",
+)
+
+user_student7 = User(
+    username="student7",
+    password=hash_password("student7"),
+    firstname="Student7",
+    lastname="Student7",
+    year=2,
+    email="student7@student7.com",
+    role="sophomore",
+)
+
+user_student8 = User(
+    username="student8",
+    password=hash_password("student8"),
+    firstname="student8",
+    lastname="student8",
+    year=2,
+    email="student8@student8.com",
+    role="sophomore",
+)
+
+user_student9 = User(
+    username="student9",
+    password=hash_password("student9"),
+    firstname="student9",
+    lastname="student9",
+    year=2,
+    email="student9@student9.com",
+    role="sophomore",
+)
+
+user_student10 = User(
+    username="student10",
+    password=hash_password("student10"),
+    firstname="student10",
+    lastname="student10",
+    year=3,
+    email="student10@student10.com",
+    role="junior",
+)
+
+user_student11 = User(
+    username="student11",
+    password=hash_password("student11"),
+    firstname="student11",
+    lastname="student11",
+    year=3,
+    email="student11@student11.com",
+    role="junior",
+)
+
+user_student12 = User(
+    username="student12",
+    password=hash_password("student12"),
+    firstname="student12",
+    lastname="student12",
+    year=1,
+    email="student12@student12.com",
+    role="freshman",
+)
+
 data_list.append(user_admin)
 data_list.append(user_student1)
 data_list.append(user_student2)
 data_list.append(user_student3)
 data_list.append(user_student4)
 data_list.append(user_student5)
+data_list.append(user_student6)
+data_list.append(user_student7)
+data_list.append(user_student8)
+data_list.append(user_student9)
+data_list.append(user_student10)
+data_list.append(user_student11)
+data_list.append(user_student12)
 
 
 # SECTION - Category Creating
