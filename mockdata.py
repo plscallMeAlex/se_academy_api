@@ -6,6 +6,8 @@ from security import hash_password
 from db.database import SessionLocal
 from db.models.user_mdl import User
 from db.models.token_mdl import Token
+from db.models.category_mdl import Category
+from db.models.course_mdl import Course
 
 # This file is for creating the mock data prepared for demonstration purposes.
 session: Session = SessionLocal()
@@ -27,7 +29,7 @@ def create_mock_data(data_list: list):
         session.close()
 
 
-# User Section
+# SECTION - User Creating
 user_admin = User(
     username="admin",
     password=hash_password("admin"),
@@ -92,13 +94,87 @@ user_student5 = User(
     role="graduated",
 )
 
-
 data_list.append(user_admin)
 data_list.append(user_student1)
 data_list.append(user_student2)
 data_list.append(user_student3)
 data_list.append(user_student4)
 data_list.append(user_student5)
+
+
+# SECTION - Category Creating
+category1 = Category(name="Programming")
+category2 = Category(name="Analysis")
+category3 = Category(name="Design")
+category4 = Category(name="Mathematics")
+category5 = Category(name="Science")
+category6 = Category(name="Language")
+
+data_list.append(category1)
+data_list.append(category2)
+data_list.append(category3)
+data_list.append(category4)
+data_list.append(category5)
+data_list.append(category6)
+
+
+# SECTION - Course Creating
+course1 = Course(
+    title="DSA",
+    description="Data Structures and Algorithms course for beginners.",
+    subjectid="COM201",
+    course_image="images/dsa.png",
+    category_list=["Programming", "Analysis"],
+    year=2,
+    lecturer="Doctor Sunthana",
+)
+
+course2 = Course(
+    title="Web Development",
+    description="Web Development course for beginners.",
+    subjectid="COM202",
+    course_image="images/webdev.jpg",
+    category_list=["Programming", "Design"],
+    year=2,
+    lecturer="Doctor Visit",
+)
+
+course3 = Course(
+    title="Calculus",
+    description="Calculus course for beginners.",
+    subjectid="MATH101",
+    course_image="images/calculus.png",
+    category_list=["Mathematics"],
+    year=1,
+    lecturer="Doctor Tui",
+)
+
+course4 = Course(
+    title="Embedded Systems",
+    description="Embedded Systems course for beginners.",
+    subjectid="COM301",
+    course_image="images/embedded.jpg",
+    category_list=["Programming", "Analysis"],
+    year=3,
+    lecturer="Doctor Phairoj",
+)
+
+course5 = Course(
+    title="Computer Programming",
+    description="Computer Programming course for beginners.",
+    subjectid="COM101",
+    course_image="images/computerprogramming.jpg",
+    category_list=["Programming"],
+    year=1,
+    lecturer="Doctor Visit",
+)
+
+data_list.append(course1)
+data_list.append(course2)
+data_list.append(course3)
+data_list.append(course4)
+data_list.append(course5)
+
 
 if __name__ == "__main__":
     create_mock_data(data_list)
