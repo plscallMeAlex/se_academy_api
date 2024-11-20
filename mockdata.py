@@ -26,8 +26,8 @@ def create_mock_data(data_list: list, depend_list: list = None):
             session.commit()
             session.refresh(data)
             print(f"Data {data} has been created.")
-        print("Proceed to creating dependent data...")
         if depend_list:
+            print("Proceed to creating dependent data...")
             for depend in depend_list:
                 session.add(depend)
                 session.commit()
@@ -257,11 +257,15 @@ course5 = Course(
     lecturer="Doctor Visit",
 )
 
-data_list.append(course1)
-data_list.append(course2)
-data_list.append(course3)
-data_list.append(course4)
-data_list.append(course5)
+# Commit courses first
+courses = [course1, course2, course3, course4, course5]
+for course in courses:
+    session.add(course)
+session.commit()
+
+# Refresh to access the generated `id` fields
+for course in courses:
+    session.refresh(course)
 
 
 # SECTION - Achievement Creating
@@ -295,11 +299,9 @@ achievement5 = Achievement(
     course_id=course5.id,
 )
 
-depend_list.append(achievement1)
-depend_list.append(achievement2)
-depend_list.append(achievement3)
-depend_list.append(achievement4)
-depend_list.append(achievement5)
+depend_list.extend(
+    [achievement1, achievement2, achievement3, achievement4, achievement5]
+)
 
 
 # SECTION - Quiz Creating
@@ -453,22 +455,11 @@ quiz5_3 = Quiz(
     correct_answer=0,
 )
 
-depend_list.append(quiz1_1)
-depend_list.append(quiz1_2)
-depend_list.append(quiz1_3)
-depend_list.append(quiz2_1)
-depend_list.append(quiz2_2)
-depend_list.append(quiz2_3)
-depend_list.append(quiz3_1)
-depend_list.append(quiz3_2)
-depend_list.append(quiz3_3)
-depend_list.append(quiz4_1)
-depend_list.append(quiz4_2)
-depend_list.append(quiz4_3)
-depend_list.append(quiz5_1)
-depend_list.append(quiz5_2)
-depend_list.append(quiz5_3)
-
+depend_list.extend([quiz1_1, quiz1_2, quiz1_3])
+depend_list.extend([quiz2_1, quiz2_2, quiz2_3])
+depend_list.extend([quiz3_1, quiz3_2, quiz3_3])
+depend_list.extend([quiz4_1, quiz4_2, quiz4_3])
+depend_list.extend([quiz5_1, quiz5_2, quiz5_3])
 
 if __name__ == "__main__":
     create_mock_data(data_list, depend_list)
