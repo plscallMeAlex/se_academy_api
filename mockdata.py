@@ -9,6 +9,7 @@ from db.models.token_mdl import Token
 from db.models.category_mdl import Category
 from db.models.course_mdl import Course
 from db.models.achievement_mdl import Achievement
+from db.models.quiz_mdl import Quiz
 
 # This file is for creating the mock data prepared for demonstration purposes.
 session: Session = SessionLocal()
@@ -213,6 +214,189 @@ data_list.append(achievement2)
 data_list.append(achievement3)
 data_list.append(achievement4)
 data_list.append(achievement5)
+
+
+# SECTION - Quiz Creating
+quiz1_1 = Quiz(
+    title="DSA Quiz 1",
+    course_id=course1.id,
+    question="What is the time complexity of the Bubble Sort algorithm?",
+    choices=["O(n)", "O(n^2)", "O(n log n)", "O(1)"],
+    correct_answer=1,
+)
+
+quiz1_2 = Quiz(
+    title="DSA Quiz 2",
+    course_id=course1.id,
+    question="What is the time complexity of the Quick Sort algorithm?",
+    choices=["O(n)", "O(n^2)", "O(n log n)", "O(1)"],
+    correct_answer=2,
+)
+
+quiz1_3 = Quiz(
+    title="DSA Quiz 3",
+    course_id=course1.id,
+    question="What is the time complexity of the Merge Sort algorithm?",
+    choices=["O(n)", "O(n^2)", "O(n log n)", "O(1)"],
+    correct_answer=2,
+)
+
+quiz2_1 = Quiz(
+    title="Web Development Quiz 1",
+    course_id=course2.id,
+    question="What is the full form of HTML?",
+    choices=[
+        "Hyper Text Markup Language",
+        "Hyperlinks and Text Markup Language",
+        "Home Tool Markup Language",
+        "None of the above",
+    ],
+    correct_answer=0,
+)
+
+quiz2_2 = Quiz(
+    title="Web Development Quiz 2",
+    course_id=course2.id,
+    question="What is the full form of CSS?",
+    choices=[
+        "Computer Style Sheets",
+        "Cascading Style Sheets",
+        "Creative Style Sheets",
+        "Colorful Style Sheets",
+    ],
+    correct_answer=1,
+)
+
+quiz2_3 = Quiz(
+    title="Web Development Quiz 3",
+    course_id=course2.id,
+    question="What is the full form of HTTP?",
+    choices=[
+        "Hyper Text Transfer Protocol",
+        "Hyper Text Test Protocol",
+        "Hyper Tool Transfer Protocol",
+        "Hyper Transfer Protocol",
+    ],
+    correct_answer=0,
+)
+
+quiz3_1 = Quiz(
+    title="Calculus Quiz 1",
+    course_id=course3.id,
+    question="What is the derivative of x^2?",
+    choices=["1", "2x", "x", "0"],
+    correct_answer=1,
+)
+
+quiz3_2 = Quiz(
+    title="Calculus Quiz 2",
+    course_id=course3.id,
+    question="What is the integral of x?",
+    choices=["1", "2x", "x^2", "0"],
+    correct_answer=2,
+)
+
+quiz3_3 = Quiz(
+    title="Calculus Quiz 3",
+    course_id=course3.id,
+    question="What is the derivative of sin(x)?",
+    choices=["cos(x)", "sin(x)", "tan(x)", "cot(x)"],
+    correct_answer=0,
+)
+
+quiz4_1 = Quiz(
+    title="Embedded Systems Quiz 1",
+    course_id=course4.id,
+    question="What is the full form of ARM?",
+    choices=[
+        "Advanced RISC Machine",
+        "Advanced Reduced Instruction Set Computer",
+        "Advanced Reduced Instruction Set Machine",
+        "Advanced RISC Microcontroller",
+    ],
+    correct_answer=1,
+)
+
+quiz4_2 = Quiz(
+    title="Embedded Systems Quiz 2",
+    course_id=course4.id,
+    question="What is the full form of FPGA?",
+    choices=[
+        "Fast Programming Gate Array",
+        "Field Programming Gate Array",
+        "Field Programmable Gate Array",
+        "Fast Programmable Gate Array",
+    ],
+    correct_answer=2,
+)
+
+quiz4_3 = Quiz(
+    title="Embedded Systems Quiz 3",
+    course_id=course4.id,
+    question="What is the full form of RTOS?",
+    choices=[
+        "Real Time Operating System",
+        "Real Time Operating Software",
+        "Real Time Operating Service",
+        "Real Time Operating Software",
+    ],
+    correct_answer=0,
+)
+
+quiz5_1 = Quiz(
+    title="Computer Programming Quiz 1",
+    course_id=course5.id,
+    question="What is the full form of CPU?",
+    choices=[
+        "Central Processing Unit",
+        "Central Process Unit",
+        "Computer Personal Unit",
+        "Central Processor Unit",
+    ],
+    correct_answer=0,
+)
+
+quiz5_2 = Quiz(
+    title="Computer Programming Quiz 2",
+    course_id=course5.id,
+    question="What is the full form of RAM?",
+    choices=[
+        "Random Access Memory",
+        "Randomly Access Memory",
+        "Run Access Memory",
+        "Random Accessible Memory",
+    ],
+    correct_answer=0,
+)
+
+quiz5_3 = Quiz(
+    title="Computer Programming Quiz 3",
+    course_id=course5.id,
+    question="What is the full form of ROM?",
+    choices=[
+        "Read Only Memory",
+        "Read On Memory",
+        "Random Only Memory",
+        "Read Only Memory",
+    ],
+    correct_answer=0,
+)
+
+data_list.append(quiz1_1)
+data_list.append(quiz1_2)
+data_list.append(quiz1_3)
+data_list.append(quiz2_1)
+data_list.append(quiz2_2)
+data_list.append(quiz2_3)
+data_list.append(quiz3_1)
+data_list.append(quiz3_2)
+data_list.append(quiz3_3)
+data_list.append(quiz4_1)
+data_list.append(quiz4_2)
+data_list.append(quiz4_3)
+data_list.append(quiz5_1)
+data_list.append(quiz5_2)
+data_list.append(quiz5_3)
 
 
 if __name__ == "__main__":
