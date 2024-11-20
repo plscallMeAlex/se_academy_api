@@ -7,7 +7,7 @@ class RoleEnum(str, Enum):
     sophomore = "sophomore"
     junior = "junior"
     senior = "senior"
-    graduate = "graduate"
+    graduated = "graduated"
     admin = "admin"
 
 

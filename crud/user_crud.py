@@ -45,7 +45,7 @@ def user_register(user_create: UserCreate, db: Session):
         case 4:
             role = RoleEnum.senior
         case 5:
-            role = RoleEnum.graduate
+            role = RoleEnum.graduated
         case _:
             role = RoleEnum.freshman
 
