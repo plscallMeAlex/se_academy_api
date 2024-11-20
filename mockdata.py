@@ -295,7 +295,6 @@ data_list.append(achievement5)
 
 # SECTION - Quiz Creating
 quiz1_1 = Quiz(
-    title="DSA Quiz 1",
     course_id=course1.id,
     question="What is the time complexity of the Bubble Sort algorithm?",
     choices=["O(n)", "O(n^2)", "O(n log n)", "O(1)"],
@@ -303,7 +302,6 @@ quiz1_1 = Quiz(
 )
 
 quiz1_2 = Quiz(
-    title="DSA Quiz 2",
     course_id=course1.id,
     question="What is the time complexity of the Quick Sort algorithm?",
     choices=["O(n)", "O(n^2)", "O(n log n)", "O(1)"],
@@ -311,7 +309,6 @@ quiz1_2 = Quiz(
 )
 
 quiz1_3 = Quiz(
-    title="DSA Quiz 3",
     course_id=course1.id,
     question="What is the time complexity of the Merge Sort algorithm?",
     choices=["O(n)", "O(n^2)", "O(n log n)", "O(1)"],
@@ -319,7 +316,6 @@ quiz1_3 = Quiz(
 )
 
 quiz2_1 = Quiz(
-    title="Web Development Quiz 1",
     course_id=course2.id,
     question="What is the full form of HTML?",
     choices=[
@@ -332,7 +328,6 @@ quiz2_1 = Quiz(
 )
 
 quiz2_2 = Quiz(
-    title="Web Development Quiz 2",
     course_id=course2.id,
     question="What is the full form of CSS?",
     choices=[
@@ -345,7 +340,6 @@ quiz2_2 = Quiz(
 )
 
 quiz2_3 = Quiz(
-    title="Web Development Quiz 3",
     course_id=course2.id,
     question="What is the full form of HTTP?",
     choices=[
@@ -358,7 +352,6 @@ quiz2_3 = Quiz(
 )
 
 quiz3_1 = Quiz(
-    title="Calculus Quiz 1",
     course_id=course3.id,
     question="What is the derivative of x^2?",
     choices=["1", "2x", "x", "0"],
@@ -366,7 +359,6 @@ quiz3_1 = Quiz(
 )
 
 quiz3_2 = Quiz(
-    title="Calculus Quiz 2",
     course_id=course3.id,
     question="What is the integral of x?",
     choices=["1", "2x", "x^2", "0"],
@@ -374,7 +366,6 @@ quiz3_2 = Quiz(
 )
 
 quiz3_3 = Quiz(
-    title="Calculus Quiz 3",
     course_id=course3.id,
     question="What is the derivative of sin(x)?",
     choices=["cos(x)", "sin(x)", "tan(x)", "cot(x)"],
@@ -382,7 +373,6 @@ quiz3_3 = Quiz(
 )
 
 quiz4_1 = Quiz(
-    title="Embedded Systems Quiz 1",
     course_id=course4.id,
     question="What is the full form of ARM?",
     choices=[
@@ -395,7 +385,6 @@ quiz4_1 = Quiz(
 )
 
 quiz4_2 = Quiz(
-    title="Embedded Systems Quiz 2",
     course_id=course4.id,
     question="What is the full form of FPGA?",
     choices=[
@@ -408,7 +397,6 @@ quiz4_2 = Quiz(
 )
 
 quiz4_3 = Quiz(
-    title="Embedded Systems Quiz 3",
     course_id=course4.id,
     question="What is the full form of RTOS?",
     choices=[
@@ -421,7 +409,6 @@ quiz4_3 = Quiz(
 )
 
 quiz5_1 = Quiz(
-    title="Computer Programming Quiz 1",
     course_id=course5.id,
     question="What is the full form of CPU?",
     choices=[
@@ -434,7 +421,6 @@ quiz5_1 = Quiz(
 )
 
 quiz5_2 = Quiz(
-    title="Computer Programming Quiz 2",
     course_id=course5.id,
     question="What is the full form of RAM?",
     choices=[
@@ -447,7 +433,6 @@ quiz5_2 = Quiz(
 )
 
 quiz5_3 = Quiz(
-    title="Computer Programming Quiz 3",
     course_id=course5.id,
     question="What is the full form of ROM?",
     choices=[
