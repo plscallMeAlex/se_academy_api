@@ -223,6 +223,9 @@ async def upload_video(course_id: str, course_video: CourseVideoCreate, db: Sess
     if not os.path.exists(course_dir):
         os.makedirs(course_dir)
 
+    # save the video to the directory
+    saveto = f"{course_dir}/{video.filename}"
+
     # Check if the video already exists in the directory
     if os.path.exists(saveto):
         raise HTTPException(
@@ -230,15 +233,13 @@ async def upload_video(course_id: str, course_video: CourseVideoCreate, db: Sess
             detail=f"Video {video.filename} already exists in the course directory",
         )
 
-    # save the video to the directory
-    saveto = f"videos/{course_dir}/{video.filename}"
     with open(saveto, "wb") as vid:
         vid.write(video_data)
     clip = VideoFileClip(saveto)
     total_time += clip.duration
     course_video = Course_Video(
         title=course_video.title,
-        description=course_video.description,
+        video_description=course_video.description,
         chapter=course_video.chapter,
         video_path=saveto,
         course_id=course.id,
