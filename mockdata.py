@@ -258,14 +258,14 @@ course5 = Course(
 )
 
 # Commit courses first
-courses = [course1, course2, course3, course4, course5]
-for course in courses:
-    session.add(course)
-session.commit()
+# courses = [course1, course2, course3, course4, course5]
+# for course in courses:
+#     session.add(course)
+# session.commit()
 
-# Refresh to access the generated `id` fields
-for course in courses:
-    session.refresh(course)
+# # Refresh to access the generated `id` fields
+# for course in courses:
+#     session.refresh(course)
 
 
 # SECTION - Achievement Creating
@@ -461,5 +461,45 @@ depend_list.extend([quiz3_1, quiz3_2, quiz3_3])
 depend_list.extend([quiz4_1, quiz4_2, quiz4_3])
 depend_list.extend([quiz5_1, quiz5_2, quiz5_3])
 
+
+course6 = Course(
+    title="Computer Networks",
+    description="Computer Networks course for beginners.",
+    subjectid="COM401",
+    course_image="images/computernetworks.jpg",
+    category_list=["Programming", "Analysis"],
+    year=4,
+    lecturer="Doctor Visit",
+)
+
+course7 = Course(
+    title="Machine Learning",
+    description="Machine Learning course for beginners.",
+    subjectid="COM402",
+    course_image="images/machinelearning.jpg",
+    category_list=["Programming", "Analysis"],
+    year=4,
+    lecturer="Doctor Visit",
+)
+
+course8 = Course(
+    title="Artificial Intelligence",
+    description="Artificial Intelligence course for beginners.",
+    subjectid="COM403",
+    course_image="images/artificialintelligence.jpg",
+    category_list=["Programming", "Analysis"],
+    year=4,
+    lecturer="Doctor Visit",
+)
+
+courses = [course6, course7, course8]
+for course in courses:
+    session.add(course)
+session.commit()
+
+for course in courses:
+    session.refresh(course)
+
 if __name__ == "__main__":
-    create_mock_data(data_list, depend_list)
+    pass
+    # create_mock_data()
