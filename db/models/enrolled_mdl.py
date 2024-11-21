@@ -5,6 +5,7 @@ from uuid import uuid4
 from db.database import Base
 from db.models.course_mdl import Course, Course_Video
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 
 class Enrolled_Course(Base):
@@ -13,7 +14,7 @@ class Enrolled_Course(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("user.id"))
     course_id = Column(UUID(as_uuid=True), ForeignKey("course.id"))
-    enrolled_at = Column(DateTime, default=datetime.now(timezone.utc))
+    enrolled_at = Column(DateTime, default=datetime.now(ZoneInfo("Asia/Bangkok")))
     ended_at = Column(DateTime)
 
     course = relationship("Course")

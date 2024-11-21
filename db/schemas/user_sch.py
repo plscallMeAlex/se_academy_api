@@ -35,16 +35,21 @@ class UserLogin(BaseModel):
 # response that will shown when u want the detail of the user
 class UserDetail(BaseModel):
     id: UUID
+    username: str
     firstname: str
     lastname: str
     email: EmailStr
     year: int
-    avatar: Optional[str]
+    avatar: str  # return the api for fetching the avatar image
     level: int
     score: int
-    study_hours: int
+    study_hours: float
     status: str
     role: str
+    achievements: Optional[list[UUID]]
+
+    class Config:
+        from_attributes = True
 
 
 # simple response if it work u can use it if not u can adjust it
@@ -54,9 +59,6 @@ class UserUpdate(BaseModel):
     lastname: Optional[str] = Form(None)
     email: Optional[EmailStr] = Form(None)
     year: Optional[int] = Form(None)
-
-    class Config:
-        from_attributes = True
 
 
 class UserDelete(BaseModel):

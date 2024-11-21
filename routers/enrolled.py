@@ -6,8 +6,8 @@ from db.database import db_dependency
 from db.schemas.enrolled_sch import (
     EnrolledCourseCreate,
     EnrolledCourseDetail,
+    EnrollmentDetail,
     EnrolledCourseUpdate,
-    EnrolledCourseVideoCreate,
     EnrolledCourseVideoDetail,
     EnrolledCourseVideoUpdate,
 )
@@ -23,9 +23,31 @@ async def create_enrolled_course(
     return await enrolled_crud.create_enrolled_course(enrolled_course, db)
 
 
+@router.get("/get_all", response_model=list[EnrollmentDetail])
+async def get_all_enrolled_course(db: Session = Depends(db_dependency)):
+    return await enrolled_crud.get_all_enrolled_course(db)
+
+
+@router.get("/get_enrollment_summary")
+async def get_enrollment_summary(db: Session = Depends(db_dependency)):
+    return await enrolled_crud.get_enrollment_summary(db)
+
+
+@router.get("/get_ended_enrollment_summary")
+async def get_ended_enrollment_summary(db: Session = Depends(db_dependency)):
+    return await enrolled_crud.get_ended_enrollment_summary(db)
+
+
 @router.get("/get_enrolled_course/{user_id}", response_model=list[EnrolledCourseDetail])
 async def get_enrolled_course(user_id: str, db: Session = Depends(db_dependency)):
     return await enrolled_crud.get_enrolled_course(user_id, db)
+
+
+@router.get("/get_enrolled_course_progress/{enrolled_course_id}")
+async def get_enrolled_course_progress(
+    enrolled_course_id: str, db: Session = Depends(db_dependency)
+):
+    return await enrolled_crud.get_enrolled_course_progress(enrolled_course_id, db)
 
 
 @router.get("/check_enrolled/{user_id}/{course_id}", response_class=JSONResponse)
@@ -33,6 +55,13 @@ async def check_enrolled_course(
     user_id: str, course_id: str, db: Session = Depends(db_dependency)
 ):
     return await enrolled_crud.check_enrolled_course(user_id, course_id, db)
+
+
+@router.get("/check_enrolled_course_ended/{enrolled_course_id}")
+async def check_enrolled_course_ended(
+    enrolled_course_id: str, db: Session = Depends(db_dependency)
+):
+    return await enrolled_crud.check_enrolled_course_ended(enrolled_course_id, db)
 
 
 @router.put("/update_enrolled_course/{enrolled_course_id}")

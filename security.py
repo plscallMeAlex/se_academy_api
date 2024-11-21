@@ -2,6 +2,7 @@
 import string
 import secrets
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -37,9 +38,10 @@ def create_access_token(
         token=token_str,
         user_id=user.id,
         state=True,
-        created_at=datetime.now(timezone.utc),
-        expired_at=datetime.now(timezone.utc) + timedelta(hours=expire_hours),
-        updated_at=datetime.now(timezone.utc),
+        created_at=datetime.now(ZoneInfo("Asia/Bangkok")),
+        expired_at=datetime.now(ZoneInfo("Asia/Bangkok"))
+        + timedelta(hours=expire_hours),
+        updated_at=datetime.now(ZoneInfo("Asia/Bangkok")),
     )
 
     db.add(new_token)
@@ -57,7 +59,7 @@ async def check_token_valid(token: str, db: Session = Depends(db_dependency)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User does not have a permission to access",
         )
-    if token.expired_at < datetime.now(timezone.utc):
+    if token.expired_at < datetime.now(ZoneInfo("Asia/Bangkok")):
         token.state = False
         db.commit()
         raise HTTPException(
@@ -70,9 +72,9 @@ async def check_token_valid(token: str, db: Session = Depends(db_dependency)):
 # A function to update the expired time of the token
 def update_token(token: str, extend_hours: int, db: Session = Depends(db_dependency)):
     token = db.query(token_mdl.Token).filter(token_mdl.Token.token == token).first()
-    token.updated_at = datetime.now(timezone.utc)
+    token.updated_at = datetime.now(ZoneInfo("Asia/Bangkok"))
     token.expired_at = token.expired_at + timedelta(hours=extend_hours)
-    if token.expired_at < datetime.now(timezone.utc):
+    if token.expired_at < datetime.now(ZoneInfo("Asia/Bangkok")):
         token.state = False
     else:
         token.state = True

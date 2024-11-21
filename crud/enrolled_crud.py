@@ -2,20 +2,22 @@ import os
 import mimetypes
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from db.models.user_mdl import User, User_Progress
 from db.models.course_mdl import Course
 from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
+from db.models.achievement_mdl import Achievement
 from db.schemas.enrolled_sch import (
     EnrolledCourseCreate,
     EnrolledCourseUpdate,
-    EnrolledCourseVideoCreate,
+    EnrollmentDetail,
     EnrolledCourseVideoUpdate,
 )
-from datetime import datetime, timezone
+from collections import Counter
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 CHUNK_SIZE = 1024 * 1024
-ESTIMATED_BITRATE = 500 * 1024
 
 # Enrolled course Section
 
@@ -52,6 +54,68 @@ async def create_enrolled_course(enrolled_course: EnrolledCourseCreate, db: Sess
     return JSONResponse(content={"success": True}, status_code=200)
 
 
+# get all the enrollment
+async def get_all_enrolled_course(db: Session):
+    print("get_all_enrolled_course")
+    enrolled_course = (
+        db.query(Enrolled_Course)
+        .options(joinedload(Enrolled_Course.course))
+        .order_by(Enrolled_Course.enrolled_at.desc())
+        .limit(12)
+        .all()
+    )
+
+    # Sort the enrolled course by the enrolled time recently
+    # enrolled_course = sorted(enrolled_course, key=lambda x: x.enrolled_at, reverse=True)
+
+    result = [
+        EnrollmentDetail(
+            id=enrolled.id,
+            username=db.query(User)
+            .filter(User.id == enrolled.user_id)
+            .first()
+            .username,
+            course_id=enrolled.course.subjectid,
+            course_title=enrolled.course.title,
+            enrolled_at=enrolled.enrolled_at,
+        )
+        for enrolled in enrolled_course
+    ]
+
+    return result
+
+
+# get all the summary of the enrollment by month
+async def get_enrollment_summary(db: Session):
+    enrolled_courses = (
+        db.query(Enrolled_Course)
+        .options(joinedload(Enrolled_Course.course))
+        .order_by(Enrolled_Course.enrolled_at)
+        .all()
+    )
+
+    month_counts = Counter(enrolled.enrolled_at.month for enrolled in enrolled_courses)
+    month_summary = [month_counts.get(month, 0) for month in range(1, 13)]
+    return month_summary
+
+
+# get all enrolled course that already ended by month
+async def get_ended_enrollment_summary(db: Session):
+    ended_enrolled_courses = (
+        db.query(Enrolled_Course)
+        .filter(Enrolled_Course.ended_at.isnot(None))
+        .options(joinedload(Enrolled_Course.course))
+        .order_by(Enrolled_Course.ended_at.desc())
+        .all()
+    )
+
+    month_counts = Counter(
+        enrolled.ended_at.month for enrolled in ended_enrolled_courses
+    )
+    month_summary = [month_counts.get(month, 0) for month in range(1, 13)]
+    return month_summary
+
+
 # get the detail of the enrolled course
 async def get_enrolled_course(user_id: str, db: Session):
     if db.query(User).filter(User.id == user_id).first() is None:
@@ -65,6 +129,38 @@ async def get_enrolled_course(user_id: str, db: Session):
         raise HTTPException(status_code=404, detail="Course not found")
 
     return enrolled_course
+
+
+# get the progress of the user's enrolled course
+async def get_enrolled_course_progress(enrolled_course_id: str, db: Session):
+    enrolled_course_videos = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.enrolled_course_id == enrolled_course_id)
+        .all()
+    )
+
+    if not enrolled_course_videos:
+        return JSONResponse(
+            content={
+                "success": False,
+                "detail": "No video found in the enrolled course",
+            },
+            status_code=200,
+        )
+
+    count = 0
+    for video in enrolled_course_videos:
+        if video.status:
+            count += 1
+
+    return JSONResponse(
+        content={
+            "success": True,
+            "progress": count,
+            "total_video": len(enrolled_course_videos),
+        },
+        status_code=200,
+    )
 
 
 # check if the user has enrolled the course
@@ -82,14 +178,47 @@ async def check_enrolled_course(user_id: str, course_id: str, db: Session):
         .first()
     )
 
-    if not enrolled_course:
+    if enrolled_course is None:
         return JSONResponse(
             content={"success": False, "detail": "User not enrolled the course"},
             status_code=200,
         )
 
     return JSONResponse(
-        content={"success": True, "detail": "User already enrolled the course"},
+        content={
+            "success": True,
+            "enrolled_course_id": str(enrolled_course.id),
+            "detail": "User already enrolled the course",
+        },
+        status_code=200,
+    )
+
+
+async def check_enrolled_course_ended(enrolled_course_id: str, db: Session):
+    # query the enrolled course video to check if the course is already ended
+    enrolled_course_videos = (
+        db.query(Enrolled_Course_Video)
+        .filter(Enrolled_Course_Video.enrolled_course_id == enrolled_course_id)
+        .all()
+    )
+
+    # Check if the course is already ended
+    if all(video.status for video in enrolled_course_videos):
+        return JSONResponse(
+            content={
+                "success": True,
+                "detail": "Course is already ended",
+                "ended": True,
+            },
+            status_code=200,
+        )
+
+    return JSONResponse(
+        content={
+            "success": True,
+            "detail": "Course is not ended yet",
+            "ended": False,
+        },
         status_code=200,
     )
 
@@ -98,24 +227,60 @@ async def check_enrolled_course(user_id: str, course_id: str, db: Session):
 async def update_enrolled_course(
     enrolled_course_id: str, update_enrolled_course: EnrolledCourseUpdate, db: Session
 ):
-    if update_enrolled_course.ended_at is None:
+    # Check if it None data
+    if update_enrolled_course.ended is None:
         return JSONResponse(
             content={"success": True, "detail": "course is nothing updated"},
             status_code=200,
         )
 
-    if (
+    db_enrolled_course = (
         db.query(Enrolled_Course)
         .filter(Enrolled_Course.id == enrolled_course_id)
         .first()
-        is None
-    ):
+    )
+
+    # Check if the course is not found
+    if not db_enrolled_course:
         raise HTTPException(status_code=404, detail="Course not found")
 
-    db.query(Enrolled_Course).filter(Enrolled_Course.id == enrolled_course_id).update(
-        update_enrolled_course.model_dump(), synchronize_session=False
-    )
-    db.commit()
+    # Check the boolean value of the ended
+    if update_enrolled_course.ended:
+        # ended the course at the current time
+        current_time = datetime.now(ZoneInfo("Asia/Bangkok"))
+        db_enrolled_course.ended_at = current_time
+        db.commit()
+        db.refresh(db_enrolled_course)
+
+        achievement = (
+            db.query(Achievement)
+            .filter(Achievement.course_id == db_enrolled_course.course_id)
+            .first()
+        )
+        # If the course has an achievement, then add the achievement to the user
+        if achievement:
+            user = db.query(User).filter(User.id == db_enrolled_course.user_id).first()
+
+            if achievement.id in user.achievements:
+                return JSONResponse(
+                    content={
+                        "success": True,
+                        "detail": "Course is already ended and achievement already added",
+                    },
+                    status_code=200,
+                )
+
+            user.achievements = (
+                user.achievements + [achievement.id]
+                if user.achievements
+                else [achievement.id]
+            )
+
+            user.score += 100
+            user.level += 1
+
+            db.commit()
+            db.refresh(user)
 
     return JSONResponse(content={"success": True}, status_code=200)
 
@@ -172,7 +337,7 @@ async def get_enrolled_course_video(user_id: str, course_video_id: str, db: Sess
 
     # check if the video has started yet
     if enrolled_video.started_at is None:
-        enrolled_video.started_at = datetime.now(timezone.utc)
+        enrolled_video.started_at = datetime.now(ZoneInfo("Asia/Bangkok"))
         db.commit()
 
     video = enrolled_video.course_video
@@ -182,15 +347,8 @@ async def get_enrolled_course_video(user_id: str, course_video_id: str, db: Sess
     if not mime_type:
         mime_type = "application/octet-stream"
 
-    start_byte = int(enrolled_video.timestamp * ESTIMATED_BITRATE)
-    file_size = os.path.getsize(video_path)
-
-    if start_byte >= file_size:
-        start_byte = 0
-
     def iterfile():
         with open(video_path, "rb") as file:
-            file.seek(start_byte)
             while True:
                 data = file.read(CHUNK_SIZE)
                 if not data:
@@ -214,8 +372,6 @@ async def update_enrolled_course_video(
         .first()
     )
 
-    print("enrolled_course_video", enrolled_course_video.timestamp)
-
     if not enrolled_course_video:
         raise HTTPException(status_code=404, detail="Video not found")
 
@@ -225,14 +381,39 @@ async def update_enrolled_course_video(
     if enrolled_course_video.status is not None:
         # update the status of the video
         if enrolled_course_video.status:
-            current_time = datetime.now(timezone.utc)
+            # Check if the User progress is already have this enrolled video
+            user_progress = (
+                db.query(User_Progress)
+                .filter(
+                    User_Progress.enrolled_course_video_id
+                    == db_enrolled_course_video.id
+                )
+                .first()
+            )
+            if user_progress:
+                raise HTTPException(
+                    status_code=400, detail="User already finished this video"
+                )
 
-            db_enrolled_course_video.ended_at = current_time
+            current_time = datetime.now(ZoneInfo("Asia/Bangkok"))
+
             db_enrolled_course_video.status = enrolled_course_video.status
 
+            # Check whether the video has started or not
+            if db_enrolled_course_video.started_at is None:
+                raise HTTPException(status_code=400, detail="Video has not started yet")
+
+            # Handle the ended time of the video
+            if db_enrolled_course_video.ended_at is None:
+                db_enrolled_course_video.ended_at = current_time
+
             # adjust time zone
-            start_time = db_enrolled_course_video.started_at.astimezone(timezone.utc)
-            end_time = db_enrolled_course_video.ended_at.astimezone(timezone.utc)
+            start_time = db_enrolled_course_video.started_at.astimezone(
+                ZoneInfo("Asia/Bangkok")
+            )
+            end_time = db_enrolled_course_video.ended_at.astimezone(
+                ZoneInfo("Asia/Bangkok")
+            )
 
             # Calculate duration
             duration = (end_time - start_time).total_seconds()
@@ -248,9 +429,24 @@ async def update_enrolled_course_video(
             )
             db.add(user_progress)
 
+            # update the user study hours
+            await update_user_study_hours(user_id, duration, db)
+
     db.commit()
     db.refresh(db_enrolled_course_video)
     return JSONResponse(
         content={"success": True, "detail": "Update the video detail success"},
         status_code=200,
     )
+
+
+# duration will be unit of second
+async def update_user_study_hours(user_id: str, duration: int, db: Session):
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
+        return
+    # Convert the duration to hours
+    user.study_hours += duration / 3600
+    db.commit()
+    db.refresh(user)
+    return

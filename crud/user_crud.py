@@ -2,11 +2,16 @@ from fastapi import HTTPException, Form, UploadFile
 from fastapi.responses import JSONResponse, FileResponse
 from typing import Annotated
 from sqlalchemy.orm import Session
-from db.models.user_mdl import User
+from db.models.user_mdl import User, User_Progress
+from db.models.enrolled_mdl import Enrolled_Course, Enrolled_Course_Video
+from db.models.course_mdl import Course, Course_Video
 from db.models.enum_type import RoleEnum, StatusEnum
 from db.schemas.user_sch import UserLogin, UserCreate, UserUpdate
+from settings import get_settings
 from security import create_access_token, verify_password, hash_password
 import base64
+
+SETTINGS = get_settings()
 
 
 # login user and assign the token to the user
@@ -40,7 +45,7 @@ def user_register(user_create: UserCreate, db: Session):
         case 4:
             role = RoleEnum.senior
         case 5:
-            role = RoleEnum.graduate
+            role = RoleEnum.graduated
         case _:
             role = RoleEnum.freshman
 
@@ -63,7 +68,19 @@ async def get_user(user_id: str, db: Session):
     db_user = db.query(User).filter(User.id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    db_user.avatar = f"{SETTINGS.BACKEND_URL}/user/avatar/{user_id}"
     return db_user
+
+
+# get all users
+async def get_users(db: Session):
+    db_users = db.query(User).filter(User.role != "admin").all()
+    if db_users is None:
+        raise HTTPException(status_code=404, detail="Users not found")
+    # assign the avatar api for each user
+    for user in db_users:
+        user.avatar = f"{SETTINGS.BACKEND_URL}/user/avatar/{user.id}"
+    return db_users
 
 
 # get user avatar
@@ -79,6 +96,7 @@ async def get_avatar(user_id: str, db: Session):
     return base64_img
 
 
+# get the top 3 users to display on the leaderboard
 async def get_leaderboard(db: Session):
     db_users = (
         db.query(User)
@@ -91,6 +109,56 @@ async def get_leaderboard(db: Session):
     if db_users is None:
         raise HTTPException(status_code=404, detail="Leaderboard not found")
     return db_users
+
+
+# get user progress
+async def get_user_progress(user_id: str, db: Session):
+    user_progress = (
+        db.query(User_Progress)
+        .filter(User_Progress.user_id == user_id)
+        .order_by(User_Progress.started_at.desc())
+        .limit(10)
+        .all()
+    )
+
+    if user_progress is None:
+        raise HTTPException(status_code=404, detail="User progress not found")
+
+    result = []
+
+    for progress in user_progress:
+
+        enrollment = (
+            db.query(Enrolled_Course)
+            .filter(Enrolled_Course.id == progress.enrolled_course_id)
+            .first()
+        )
+
+        video_enrollment = (
+            db.query(Enrolled_Course_Video)
+            .filter(Enrolled_Course_Video.id == progress.enrolled_course_video_id)
+            .first()
+        )
+
+        course_name = db.query(Course).filter(Course.id == enrollment.course_id).first()
+
+        video_name = (
+            db.query(Course_Video)
+            .filter(Course_Video.id == video_enrollment.course_video_id)
+            .first()
+        )
+
+        result.append(
+            {
+                "course_name": course_name.title,
+                "video_name": video_name.title,
+                "started_at": progress.started_at,
+                "ended_at": progress.ended_at,
+                "duration": progress.duration,
+            }
+        )
+
+    return result
 
 
 # for update information of the user
