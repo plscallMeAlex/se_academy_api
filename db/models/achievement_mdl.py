@@ -10,5 +10,5 @@ class Achievement(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid4)
     title = Column(String)
     description = Column(String)
-    badge = Column(String, default="images/badge/default_badge.png")
+    badge = Column(String, default="default_badge.png")
     course_id = Column(UUID(as_uuid=True))

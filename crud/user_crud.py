@@ -74,7 +74,7 @@ async def get_user(user_id: str, db: Session):
 
 # get all users
 async def get_users(db: Session):
-    db_users = db.query(User).all()
+    db_users = db.query(User).filter(User.role != "admin").all()
     if db_users is None:
         raise HTTPException(status_code=404, detail="Users not found")
     # assign the avatar api for each user

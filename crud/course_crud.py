@@ -7,6 +7,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 from db.models.category_mdl import Category
 from db.models.course_mdl import Course, Course_Video
+from db.models.enrolled_mdl import Enrolled_Course_Video
 from db.schemas.course_sch import (
     CourseCreate,
     CourseUpdate,
@@ -333,6 +334,11 @@ async def delete_video(video_id: str, db: Session):
         os.remove(file_path)
     except FileNotFoundError:
         pass
+
+    # delete the video from the enrolled course
+    db.query(Enrolled_Course_Video).filter(  # Delete the video from the enrolled course
+        Enrolled_Course_Video.course_video_id == video_id
+    ).delete()
 
     course.total_video -= 1
     course.total_duration -= video.duration
