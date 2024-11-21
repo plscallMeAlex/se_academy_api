@@ -493,13 +493,12 @@ course8 = Course(
 )
 
 courses = [course6, course7, course8]
-for course in courses:
-    session.add(course)
-session.commit()
+# for course in courses:
+#     session.add(course)
+# session.commit()
 
-for course in courses:
-    session.refresh(course)
+# for course in courses:
+#     session.refresh(course)
 
 if __name__ == "__main__":
-    pass
-    # create_mock_data()
+    create_mock_data(courses)
