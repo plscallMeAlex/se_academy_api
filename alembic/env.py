@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+import os
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -21,11 +22,18 @@ if config.config_file_name is not None:
 from db.models.models import base_metadata
 target_metadata = base_metadata
 
+db_url = os.getenv("DB_URL")
+if db_url is None:
+    raise ValueError("DB_URL environment variable is not set")
+
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+from alembic import context
+config = context.config
+config.set_main_option('sqlalchemy.url', db_url)
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
