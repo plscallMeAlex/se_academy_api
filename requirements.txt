@@ -50,7 +50,7 @@ pytest-mock==3.14.0
 pytest-postgresql==6.1.1
 python-dotenv==1.0.1
 python-jose==3.4.0
-python-multipart==0.0.9
+python-multipart==0.0.18
 PyYAML==6.0.2
 requests==2.32.3
 rich==13.8.0
