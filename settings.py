@@ -5,18 +5,18 @@ from pydantic_settings import BaseSettings
 
 class Setting(BaseSettings):
     # Frontend URL
-    FRONTEND_URL: str
-    BACKEND_URL: str
+    # FRONTEND_URL: str
+    # BACKEND_URL: str
 
     # Database
     DB_URL: str
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    # POSTGRES_USER: str
+    # POSTGRES_PASSWORD: str
+    # POSTGRES_DB: str
 
     # Token
     SECRET_KEY: str
-    EXPIRE_TIME_HOURS: int
+    # EXPIRE_TIME_HOURS: int
 
     class Config:
         env_file = ".env"
