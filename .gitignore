@@ -6,6 +6,4 @@ venv
 __pycache__/
 *.pyc
 
-alembic.ini
-
 note.txt
