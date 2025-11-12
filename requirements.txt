@@ -52,7 +52,7 @@ python-dotenv==1.0.1
 python-jose==3.4.0
 python-multipart==0.0.18
 PyYAML==6.0.2
-requests==2.32.3
+requests==2.32.4
 rich==13.8.0
 rsa==4.9
 shellingham==1.5.4
